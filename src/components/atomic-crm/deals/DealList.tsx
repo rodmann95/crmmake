@@ -23,7 +23,7 @@ import { OnlyMineInput } from "./OnlyMineInput";
 
 const DealList = () => {
   const { identity } = useGetIdentity();
-  const { dealCategories } = useConfigurationContext();
+  const { dealCategories, dealCycles } = useConfigurationContext();
   const translate = useTranslate();
 
   if (!identity) return null;
@@ -47,6 +47,19 @@ const DealList = () => {
       />
     </WrapperField>,
     <OnlyMineInput source="sales_id" alwaysOn />,
+    <WrapperField
+      source="commercial_cycle"
+      label="resources.deals.fields.commercial_cycle"
+    >
+      <SelectInput
+        source="commercial_cycle"
+        label={false}
+        emptyText="resources.deals.fields.commercial_cycle"
+        choices={dealCycles}
+        optionText="label"
+        optionValue="value"
+      />
+    </WrapperField>,
   ];
 
   return (

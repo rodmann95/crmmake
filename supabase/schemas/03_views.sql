@@ -29,6 +29,7 @@ select
     null::json as contact_note,
     null::json as deal_note
 from public.contacts co
+    left join public.contact_companies cc on cc.contact_id = co.id
 union all
 select
     ('contactNote.' || cn.id || '.created') as id,
@@ -43,6 +44,7 @@ select
     null::json as deal_note
 from public.contact_notes cn
     left join public.contacts co on co.id = cn.contact_id
+    left join public.contact_companies cc on cc.contact_id = co.id
 union all
 select
     ('deal.' || d.id || '.created') as id,
@@ -93,10 +95,10 @@ select
     c.tax_identifier,
     c.logo,
     count(distinct d.id) as nb_deals,
-    count(distinct co.id) as nb_contacts
+    count(distinct cc.contact_id) as nb_contacts
 from public.companies c
     left join public.deals d on c.id = d.company_id
-    left join public.contacts co on c.id = co.company_id
+    left join public.contact_companies cc on c.id = cc.company_id
 group by c.id;
 
 create or replace view public.contacts_summary with (security_invoker = on) as
@@ -114,18 +116,18 @@ select
     co.status,
     co.tags,
     co.company_id,
+    co.company_ids,
     co.sales_id,
     co.linkedin_url,
     co.email_jsonb,
     co.phone_jsonb,
     (jsonb_path_query_array(co.email_jsonb, '$[*]."email"'))::text as email_fts,
     (jsonb_path_query_array(co.phone_jsonb, '$[*]."number"'))::text as phone_fts,
-    c.name as company_name,
+    (select name from public.companies where id = co.company_id) as company_name,
     count(distinct t.id) filter (where t.done_date is null) as nb_tasks
 from public.contacts co
     left join public.tasks t on co.id = t.contact_id
-    left join public.companies c on co.company_id = c.id
-group by co.id, c.name;
+group by co.id;
 
 create or replace view public.init_state with (security_invoker = off) as
 select count(sub.id) as is_initialized

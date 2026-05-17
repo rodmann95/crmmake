@@ -44,6 +44,7 @@ import {
   defaultCurrency,
   defaultDarkModeLogo,
   defaultDealCategories,
+  defaultDealCycles,
   defaultDealPipelineStatuses,
   defaultDealStages,
   defaultLightModeLogo,
@@ -59,6 +60,7 @@ import { ContactListMobile } from "../contacts/ContactList.tsx";
 import { ContactShow } from "../contacts/ContactShow.tsx";
 import { CompanyShow } from "../companies/CompanyShow.tsx";
 import { NoteShowPage } from "../notes/NoteShowPage.tsx";
+import { TasksPage } from "../tasks/TasksPage.tsx";
 
 const defaultStore = localStorageStore(undefined, "CRM");
 
@@ -116,6 +118,7 @@ export const CRM = ({
   companySectors = defaultCompanySectors,
   currency = defaultCurrency,
   dealCategories = defaultDealCategories,
+  dealCycles = defaultDealCycles,
   dealPipelineStatuses = defaultDealPipelineStatuses,
   dealStages = defaultDealStages,
   darkModeLogo = defaultDarkModeLogo,
@@ -155,6 +158,7 @@ export const CRM = ({
         companySectors,
         currency,
         dealCategories,
+        dealCycles,
         dealPipelineStatuses,
         dealStages,
         noteStatuses,
@@ -263,6 +267,7 @@ const DesktopAdmin = (
         <Route path={ProfilePage.path} element={<ProfilePage />} />
         <Route path={SettingsPage.path} element={<SettingsPage />} />
         <Route path={ImportPage.path} element={<ImportPage />} />
+        <Route path={TasksPage.path} element={<TasksPage />} />
         <Route path={ChangelogPage.path} element={<ChangelogPage />} />
       </CustomRoutes>
       <Resource name="deals" {...deals} />

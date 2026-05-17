@@ -35,6 +35,7 @@ const normalizeContactArrayFields = (record: Contact) => ({
     record.phone_jsonb && record.phone_jsonb.length > 0
       ? record.phone_jsonb
       : defaultPhoneJsonb,
+  company_ids: record.company_ids || [],
 });
 
 const ContactEditContent = () => {

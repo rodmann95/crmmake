@@ -67,3 +67,10 @@ create policy "Enable update for admins" on public.configuration for update to a
 
 -- Favicons excluded domains
 create policy "Enable access for authenticated users only" on public.favicons_excluded_domains to authenticated using (true) with check (true);
+
+-- Contact Companies (junction table for M2M contacts <-> companies)
+alter table public.contact_companies enable row level security;
+create policy "contact_companies select" on public.contact_companies for select to authenticated using (true);
+create policy "contact_companies insert" on public.contact_companies for insert to authenticated with check (true);
+create policy "contact_companies update" on public.contact_companies for update to authenticated using (true) with check (true);
+create policy "contact_companies delete" on public.contact_companies for delete to authenticated using (true);

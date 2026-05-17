@@ -48,50 +48,77 @@ export const DealCardContent = ({
     >
       <RecordContextProvider value={deal}>
         <Card
-          className={`py-3 transition-all duration-200 ${
+          className={`py-1 transition-all duration-200 border-l-4 ${
             snapshot?.isDragging
-              ? "opacity-90 transform rotate-1 shadow-lg"
-              : "shadow-sm hover:shadow-md"
+              ? "opacity-90 transform rotate-2 shadow-xl border-l-primary scale-105 z-50"
+              : "shadow-sm hover:shadow-md border-l-transparent hover:border-l-primary"
           }`}
         >
-          <CardContent className="px-3 flex flex-col">
-            <div className="flex-1 flex">
-              <p className="flex-1 text-sm font-medium mb-2">
+          <CardContent className="p-4 flex flex-col gap-3">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex flex-col gap-1 min-w-0">
+                <p className="text-sm font-bold leading-tight text-foreground truncate">
+                  {deal.name}
+                </p>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+                  <ReferenceField
+                    source="company_id"
+                    reference="companies"
+                    link={false}
+                  />
+                </div>
+              </div>
+              <div className="shrink-0">
                 <ReferenceField
                   source="company_id"
                   reference="companies"
                   link={false}
-                />
-                {" - "}
-                {deal.name}
-              </p>
-              <ReferenceField
-                source="company_id"
-                reference="companies"
-                link={false}
-              >
-                <CompanyAvatar width={20} height={20} />
-              </ReferenceField>
+                >
+                  <CompanyAvatar width={28} height={28} />
+                </ReferenceField>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground">
-              <NumberField
-                source="amount"
-                options={{
-                  notation: "compact",
-                  style: "currency",
-                  currency,
-                  currencyDisplay: "narrowSymbol",
-                  minimumSignificantDigits: 3,
-                }}
-              />
-              {deal.category && ", "}
-              <SelectField
-                source="category"
-                choices={dealCategories}
-                optionText="label"
-                optionValue="value"
-              />
-            </p>
+            
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1">
+                <NumberField
+                  source="amount"
+                  options={{
+                    notation: "compact",
+                    style: "currency",
+                    currency,
+                    currencyDisplay: "narrowSymbol",
+                    minimumSignificantDigits: 3,
+                  }}
+                />
+                {deal.maintenance_amount != null && deal.maintenance_amount > 0 && (
+                  <span className="text-xs text-muted-foreground font-medium flex items-center">
+                    {" + "}
+                    <NumberField
+                      source="maintenance_amount"
+                      options={{
+                        notation: "compact",
+                        style: "currency",
+                        currency,
+                        currencyDisplay: "narrowSymbol",
+                        minimumSignificantDigits: 3,
+                      }}
+                    />
+                    <span className="ml-0.5">/mês</span>
+                  </span>
+                )}
+              </p>
+              {deal.category && (
+                <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+                  <SelectField
+                    source="category"
+                    choices={dealCategories}
+                    optionText="label"
+                    optionValue="value"
+                  />
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
       </RecordContextProvider>

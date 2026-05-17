@@ -39,6 +39,7 @@ export const contactGenderDefaultLabels: Record<string, string> = {
 const personalInfoTypeMap: Record<string, string> = {
   Work: "work",
   Home: "home",
+  Personal: "personal",
   Other: "other",
 };
 

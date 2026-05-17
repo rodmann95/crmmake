@@ -59,10 +59,17 @@ export const defaultTaskTypes = [
   { value: "call", label: "Call" },
 ];
 
+export const defaultDealCycles = [
+  { value: "2024", label: "2024" },
+  { value: "2025", label: "2025" },
+  { value: "2026", label: "2026" },
+];
+
 export const defaultConfiguration: ConfigurationContextValue = {
   companySectors: defaultCompanySectors,
   currency: defaultCurrency,
   dealCategories: defaultDealCategories,
+  dealCycles: defaultDealCycles,
   dealPipelineStatuses: defaultDealPipelineStatuses,
   dealStages: defaultDealStages,
   noteStatuses: defaultNoteStatuses,

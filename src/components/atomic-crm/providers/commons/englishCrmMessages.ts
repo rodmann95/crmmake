@@ -94,6 +94,11 @@ export const englishCrmMessages = {
         export_vcard: "Export to vCard",
         new: "New Contact",
         show: "Show contact",
+        link_existing: "Link existing contact",
+        link_existing_title: "Link an existing contact",
+        link_existing_description: "Select a contact to link it.",
+        linked_success: "Contact linked successfully",
+        already_linked: "Contact is already linked",
       },
       background: {
         last_activity_on: "Last activity on %{date}",
@@ -135,6 +140,7 @@ export const englishCrmMessages = {
         personal_info_types: {
           work: "Work",
           home: "Home",
+          personal: "Personal",
           other: "Other",
         },
       },
@@ -369,6 +375,7 @@ export const englishCrmMessages = {
   crm: {
     action: {
       reset_password: "Reset Password",
+      save_and_add_another: "Save and add another",
     },
     auth: {
       first_name: "First name",
@@ -547,6 +554,9 @@ export const englishCrmMessages = {
       title: "Profile",
       updated: "Your profile has been updated",
       update_error: "An error occurred. Please try again",
+    },
+    notification: {
+      invalid_zipcode: "Invalid ZIP code",
     },
     validation: {
       invalid_url: "Must be a valid URL",

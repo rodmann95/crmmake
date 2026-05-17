@@ -10,13 +10,17 @@ import type { FocusEvent, ClipboardEventHandler } from "react";
 import { useFormContext } from "react-hook-form";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { BooleanInput } from "@/components/admin/boolean-input";
-import { ReferenceInput } from "@/components/admin/reference-input";
-import { TextInput } from "@/components/admin/text-input";
-import { RadioButtonGroupInput } from "@/components/admin/radio-button-group-input";
-import { SelectInput } from "@/components/admin/select-input";
-import { ArrayInput } from "@/components/admin/array-input";
-import { SimpleFormIterator } from "@/components/admin/simple-form-iterator";
+import {
+  BooleanInput,
+  TextInput,
+  RadioButtonGroupInput,
+  ReferenceInput,
+  ReferenceArrayInput,
+  AutocompleteArrayInput,
+  SelectInput,
+  ArrayInput,
+  SimpleFormIterator,
+} from "@/components/admin";
 
 import { isLinkedinUrl } from "../misc/isLinkedInUrl";
 import { StatusSelector } from "../notes";
@@ -86,9 +90,13 @@ const ContactPositionInputs = () => {
         {translate("resources.contacts.field_categories.position")}
       </h6>
       <TextInput source="title" helperText={false} />
-      <ReferenceInput source="company_id" reference="companies" perPage={10}>
-        <AutocompleteCompanyInput label="resources.contacts.fields.company_id" />
-      </ReferenceInput>
+      <ReferenceArrayInput source="company_ids" reference="companies" perPage={10}>
+        <AutocompleteArrayInput
+          label="resources.contacts.fields.company_id"
+          optionText="name"
+          helperText={false}
+        />
+      </ReferenceArrayInput>
     </div>
   );
 };
@@ -104,6 +112,10 @@ const ContactPersonalInformationInputs = () => {
     {
       id: "Home",
       name: translatePersonalInfoTypeLabel("Home", translate),
+    },
+    {
+      id: "Personal",
+      name: translatePersonalInfoTypeLabel("Personal", translate),
     },
     {
       id: "Other",

@@ -43,7 +43,12 @@ export const DealsChart = memo(() => {
   const months = useMemo(() => {
     if (!data) return [];
     const dealsByMonth = data.reduce((acc, deal) => {
-      const month = startOfMonth(deal.created_at ?? new Date()).toISOString();
+      // Won deals are grouped by won_date; all others by created_at
+      const wonDate = deal.stage === "won" && (deal as any).won_date
+        ? new Date((deal as any).won_date)
+        : null;
+      const groupDate = wonDate ?? new Date(deal.created_at ?? new Date());
+      const month = startOfMonth(groupDate).toISOString();
       if (!acc[month]) {
         acc[month] = [];
       }
@@ -52,27 +57,35 @@ export const DealsChart = memo(() => {
     }, {} as any);
 
     const amountByMonth = Object.keys(dealsByMonth).map((month) => {
+      const monthDeals = dealsByMonth[month];
       return {
-        date: format(month, "MMM"),
-        won: dealsByMonth[month]
+        date: format(new Date(month), "MMM"),
+        won: monthDeals
           .filter((deal: Deal) => deal.stage === "won")
-          .reduce((acc: number, deal: Deal) => {
-            acc += deal.amount;
-            return acc;
-          }, 0),
-        pending: dealsByMonth[month]
+          .reduce((acc: number, deal: Deal) => acc + (deal.amount || 0), 0),
+        won_recurring: monthDeals
+          .filter((deal: Deal) => deal.stage === "won")
+          .reduce(
+            (acc: number, deal: Deal) => acc + (deal.maintenance_amount || 0),
+            0,
+          ),
+        pending: monthDeals
           .filter((deal: Deal) => !["won", "lost"].includes(deal.stage))
           .reduce((acc: number, deal: Deal) => {
             // @ts-expect-error - multiplier type issue
-            acc += deal.amount * multiplier[deal.stage];
-            return acc;
+            const weight = multiplier[deal.stage] || 0;
+            return acc + (deal.amount || 0) * weight;
           }, 0),
-        lost: dealsByMonth[month]
-          .filter((deal: Deal) => deal.stage === "lost")
+        pending_recurring: monthDeals
+          .filter((deal: Deal) => !["won", "lost"].includes(deal.stage))
           .reduce((acc: number, deal: Deal) => {
-            acc -= deal.amount;
-            return acc;
+            // @ts-expect-error - multiplier type issue
+            const weight = multiplier[deal.stage] || 0;
+            return acc + (deal.maintenance_amount || 0) * weight;
           }, 0),
+        lost: monthDeals
+          .filter((deal: Deal) => deal.stage === "lost")
+          .reduce((acc: number, deal: Deal) => acc - (deal.amount || 0), 0),
       };
     });
 
@@ -83,7 +96,10 @@ export const DealsChart = memo(() => {
   const range = months.reduce(
     (acc, month) => {
       acc.min = Math.min(acc.min, month.lost);
-      acc.max = Math.max(acc.max, month.won + month.pending);
+      acc.max = Math.max(
+        acc.max,
+        month.won + month.won_recurring + month.pending + month.pending_recurring,
+      );
       return acc;
     },
     { min: 0, max: 0 },
@@ -102,8 +118,14 @@ export const DealsChart = memo(() => {
         <ResponsiveBar
           data={months}
           indexBy="date"
-          keys={["won", "pending", "lost"]}
-          colors={["#61cdbb", "#97e3d5", "#e25c3b"]}
+          keys={[
+            "won",
+            "won_recurring",
+            "pending",
+            "pending_recurring",
+            "lost",
+          ]}
+          colors={["#61cdbb", "#10b981", "#97e3d5", "#6ee7b7", "#e25c3b"]}
           margin={{ top: 30, right: 50, bottom: 30, left: 0 }}
           padding={0.3}
           valueScale={{
@@ -115,13 +137,40 @@ export const DealsChart = memo(() => {
           enableGridX={true}
           enableGridY={false}
           enableLabel={false}
-          tooltip={({ value, indexValue }) => (
-            <div className="p-2 bg-secondary rounded shadow inline-flex items-center gap-1 text-secondary-foreground">
-              <strong>{indexValue}: </strong>&nbsp;{value > 0 ? "+" : ""}
-              {value.toLocaleString(acceptedLanguages.at(0) ?? DEFAULT_LOCALE, {
-                style: "currency",
-                currency,
-              })}
+          tooltip={({ id, value, indexValue }) => (
+            <div className="p-2 bg-secondary rounded shadow flex flex-col gap-1 text-secondary-foreground text-xs">
+              <span className="font-bold">{indexValue}</span>
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{
+                    backgroundColor: [
+                      "#61cdbb",
+                      "#10b981",
+                      "#97e3d5",
+                      "#6ee7b7",
+                      "#e25c3b",
+                    ][
+                      [
+                        "won",
+                        "won_recurring",
+                        "pending",
+                        "pending_recurring",
+                        "lost",
+                      ].indexOf(id as string)
+                    ],
+                  }}
+                />
+                <span className="capitalize">
+                  {translate(`crm.dashboard.chart.${id}`)}:
+                </span>
+                <span className="font-semibold">
+                  {value.toLocaleString(acceptedLanguages.at(0) ?? DEFAULT_LOCALE, {
+                    style: "currency",
+                    currency,
+                  })}
+                </span>
+              </div>
             </div>
           )}
           axisTop={{

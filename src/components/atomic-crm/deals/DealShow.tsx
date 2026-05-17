@@ -28,6 +28,10 @@ import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 import { ContactList } from "./ContactList";
 import { findDealLabel, formatISODateString } from "./dealUtils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TasksIterator } from "../tasks/TasksIterator";
+import { AddTask } from "../tasks/AddTask";
+import { List } from "@/components/admin/list";
 
 export const DealShow = ({ open, id }: { open: boolean; id?: string }) => {
   const redirect = useRedirect();
@@ -55,119 +59,210 @@ const DealShowContent = () => {
   if (!record) return null;
 
   return (
-    <>
-      <div className="space-y-2">
-        {record.archived_at ? <ArchivedTitle /> : null}
-        <div className="flex-1">
-          <div className="flex justify-between items-start mb-8">
-            <div className="flex items-center gap-4">
+    <div className="flex flex-col h-full overflow-hidden">
+      {record.archived_at ? <ArchivedTitle /> : null}
+
+      {/* Header Section */}
+      <div className="p-6 border-b bg-muted/30">
+        <div className="flex justify-between items-start mb-6">
+          <div className="flex items-center gap-4">
+            <ReferenceField
+              source="company_id"
+              reference="companies"
+              link="show"
+            >
+              <CompanyAvatar />
+            </ReferenceField>
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">
+                {record.name}
+              </h2>
               <ReferenceField
                 source="company_id"
                 reference="companies"
                 link="show"
-              >
-                <CompanyAvatar />
-              </ReferenceField>
-              <h2 className="text-2xl font-semibold">{record.name}</h2>
-            </div>
-            <div className={`flex gap-2 ${record.archived_at ? "" : "pr-12"}`}>
-              {record.archived_at ? (
-                <>
-                  <UnarchiveButton record={record} />
-                  <DeleteButton />
-                </>
-              ) : (
-                <>
-                  <ArchiveButton record={record} />
-                  <EditButton />
-                </>
-              )}
+                className="text-muted-foreground hover:underline"
+              />
             </div>
           </div>
+          <div className="flex gap-2">
+            {record.archived_at ? (
+              <>
+                <UnarchiveButton record={record} />
+                <DeleteButton />
+              </>
+            ) : (
+              <>
+                <ArchiveButton record={record} />
+                <EditButton />
+              </>
+            )}
+          </div>
+        </div>
 
-          <div className="flex gap-8 m-4">
-            <div className="flex flex-col mr-10">
-              <span className="text-xs text-muted-foreground tracking-wide">
-                {translate("resources.deals.fields.expected_closing_date")}
-              </span>
-              <div className="flex items-center gap-2">
-                <span className="text-sm">
-                  {isValid(new Date(record.expected_closing_date))
-                    ? formatISODateString(record.expected_closing_date)
-                    : translate("resources.deals.invalid_date")}
-                </span>
-                {new Date(record.expected_closing_date) < new Date() ? (
-                  <Badge variant="destructive">
-                    {translate("crm.common.past")}
-                  </Badge>
-                ) : null}
-              </div>
-            </div>
+        <div className="flex flex-wrap items-start gap-y-6 gap-x-12">
+          <div className="space-y-1 min-w-[140px]">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              {translate("resources.deals.fields.amount")}
+            </p>
+            <p className="text-lg font-semibold text-primary">
+              {record.amount.toLocaleString("pt-BR", {
+                style: "currency",
+                currency,
+              })}
+            </p>
+          </div>
 
-            <div className="flex flex-col mr-10">
-              <span className="text-xs text-muted-foreground tracking-wide">
-                {translate("resources.deals.fields.amount")}
-              </span>
-              <span className="text-sm">
-                {record.amount.toLocaleString("en-US", {
-                  notation: "compact",
+          {record.maintenance_amount != null && (
+            <div className="space-y-1 min-w-[140px]">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                {translate("resources.deals.fields.maintenance_amount")}
+              </p>
+              <p className="text-lg font-semibold text-emerald-600">
+                {record.maintenance_amount.toLocaleString("pt-BR", {
                   style: "currency",
                   currency,
-                  currencyDisplay: "narrowSymbol",
-                  minimumSignificantDigits: 3,
                 })}
-              </span>
-            </div>
-
-            {record.category && (
-              <div className="flex flex-col mr-10">
-                <span className="text-xs text-muted-foreground tracking-wide">
-                  {translate("resources.deals.fields.category")}
+                <span className="text-xs font-normal text-muted-foreground ml-1">
+                  /mês
                 </span>
-                <span className="text-sm">
-                  {dealCategories.find((c) => c.value === record.category)
-                    ?.label ?? record.category}
-                </span>
-              </div>
-            )}
-
-            <div className="flex flex-col mr-10">
-              <span className="text-xs text-muted-foreground tracking-wide">
-                {translate("resources.deals.fields.stage")}
-              </span>
-              <span className="text-sm">
-                {findDealLabel(dealStages, record.stage)}
-              </span>
+              </p>
             </div>
+          )}
+
+          <div className="space-y-1 min-w-[140px] max-w-[250px]">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              {translate("resources.deals.fields.stage")}
+            </p>
+            <Badge
+              variant="secondary"
+              className="px-3 py-1 text-sm font-medium h-auto whitespace-normal text-left"
+            >
+              {findDealLabel(dealStages, record.stage)}
+            </Badge>
           </div>
 
-          {!!record.contact_ids?.length && (
-            <div className="m-4">
-              <div className="flex flex-col min-h-12 mr-10">
-                <span className="text-xs text-muted-foreground tracking-wide">
-                  {translate("resources.deals.fields.contact_ids")}
-                </span>
-                <ReferenceArrayField
-                  source="contact_ids"
-                  reference="contacts_summary"
-                >
-                  <ContactList />
-                </ReferenceArrayField>
+          <div className="space-y-1 min-w-[140px]">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider leading-tight break-words">
+              {translate("resources.deals.fields.expected_closing_date")}
+            </p>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">
+                {isValid(new Date(record.expected_closing_date))
+                  ? formatISODateString(record.expected_closing_date)
+                  : "N/A"}
+              </span>
+              {new Date(record.expected_closing_date) < new Date() &&
+              !record.archived_at ? (
+                <Badge variant="destructive" className="text-[10px] uppercase">
+                  {translate("crm.common.past")}
+                </Badge>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs Section */}
+      <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
+        <div className="px-6 border-b bg-background sticky top-0 z-10">
+          <TabsList className="h-12 w-full justify-start bg-transparent p-0 gap-6">
+            <TabsTrigger
+              value="overview"
+              className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              {translate("crm.common.overview") || "Visão Geral"}
+            </TabsTrigger>
+            <TabsTrigger
+              value="activity"
+              className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              {translate("crm.common.activity") || "Atividade"}
+            </TabsTrigger>
+            <TabsTrigger
+              value="tasks"
+              className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              {translate("resources.tasks.name", { smart_count: 2 })}
+            </TabsTrigger>
+          </TabsList>
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
+          <TabsContent value="overview" className="p-6 m-0 space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="md:col-span-2 space-y-6">
+                {record.description && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                      {translate("resources.deals.fields.description")}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-foreground whitespace-pre-line bg-muted/20 p-4 rounded-lg border border-border/50">
+                      {record.description}
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                    {translate("resources.deals.fields.contact_ids")}
+                  </h3>
+                  {!!record.contact_ids?.length ? (
+                    <ReferenceArrayField
+                      source="contact_ids"
+                      reference="contacts_summary"
+                    >
+                      <ContactList />
+                    </ReferenceArrayField>
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic">
+                      Nenhum contato vinculado.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="p-4 rounded-xl border bg-card shadow-sm space-y-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                    Metadata
+                  </h3>
+                  <div className="space-y-3">
+                    {record.category && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          {translate("resources.deals.fields.category")}
+                        </span>
+                        <span className="font-medium text-right">
+                          {dealCategories.find(
+                            (c) => c.value === record.category,
+                          )?.label ?? record.category}
+                        </span>
+                      </div>
+                    )}
+                    {record.commercial_cycle && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          {translate("resources.deals.fields.commercial_cycle")}
+                        </span>
+                        <span className="font-medium text-right">
+                          {record.commercial_cycle}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-sm border-t pt-3 mt-3">
+                      <span className="text-muted-foreground">Criado em</span>
+                      <span className="font-medium text-right">
+                        {formatISODateString(record.created_at)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
+          </TabsContent>
 
-          {record.description && (
-            <div className="m-4 whitespace-pre-line">
-              <span className="text-xs text-muted-foreground tracking-wide">
-                {translate("resources.deals.fields.description")}
-              </span>
-              <p className="text-sm leading-6">{record.description}</p>
-            </div>
-          )}
-
-          <div className="m-4">
-            <Separator className="mb-4" />
+          <TabsContent value="activity" className="p-6 m-0">
             <InfiniteListBase
               resource="deal_notes"
               filter={{ deal_id: record.id }}
@@ -177,12 +272,43 @@ const DealShowContent = () => {
               storeKey={false}
               empty={<NoteCreate reference={"deals"} />}
             >
-              <NotesIterator reference="deals" />
+              <div className="space-y-6">
+                <NoteCreate reference={"deals"} />
+                <Separator />
+                <NotesIterator reference="deals" />
+              </div>
             </InfiniteListBase>
-          </div>
+          </TabsContent>
+
+          <TabsContent value="tasks" className="p-6 m-0">
+            <InfiniteListBase
+              resource="tasks"
+              filter={{ deal_id: record.id }}
+              sort={{ field: "due_date", order: "ASC" }}
+              perPage={25}
+              disableSyncWithLocation
+              storeKey={false}
+            >
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">
+                    {translate("resources.tasks.name", { smart_count: 2 })}
+                  </h3>
+                  <AddTask
+                    selectContact={true}
+                    selectDeal={false}
+                    display="chip"
+                    record={record}
+                  />
+                </div>
+                <Separator />
+                <TasksIterator showContact />
+              </div>
+            </InfiniteListBase>
+          </TabsContent>
         </div>
-      </div>
-    </>
+      </Tabs>
+    </div>
   );
 };
 

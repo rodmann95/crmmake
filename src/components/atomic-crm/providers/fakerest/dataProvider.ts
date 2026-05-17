@@ -181,6 +181,33 @@ export const createDataProvider = ({
         const start = (page - 1) * perPage;
         return { data: all.slice(start, start + perPage), total: all.length };
       }
+      if (resource === "contacts") {
+        const { company_id, ...restFilter } = params.filter || {};
+        if (company_id != null) {
+          const { data: allContacts } = await baseDataProvider.getList<Contact>("contacts", {
+            ...params,
+            filter: restFilter,
+            pagination: { page: 1, perPage: 1000 },
+          });
+          const filtered = allContacts.filter(
+            (c) =>
+              Number(c.company_id) === Number(company_id) ||
+              (c.company_ids && c.company_ids.map(Number).includes(Number(company_id)))
+          );
+          const { page, perPage } = params.pagination;
+          const start = (page - 1) * perPage;
+          
+          // Override company_id to satisfy ReferenceManyField client-side filter
+          const processedData = filtered
+            .slice(start, start + perPage)
+            .map(c => ({ ...c, company_id: Number(company_id) }));
+            
+          return {
+            data: processedData,
+            total: filtered.length,
+          };
+        }
+      }
       return baseDataProvider.getList(resource, params);
     },
     unarchiveDeal: async (deal: Deal) => {

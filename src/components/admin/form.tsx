@@ -178,6 +178,7 @@ const SaveButton = <RecordType extends RaRecord = RaRecord>(
     type = "submit",
     transform,
     variant = "default",
+    redirect,
     ...rest
   } = props;
   const translate = useTranslate();
@@ -202,6 +203,7 @@ const SaveButton = <RecordType extends RaRecord = RaRecord>(
         errors = await saveContext.save(values, {
           ...mutationOptions,
           transform,
+          redirect,
         });
       }
       if (errors != null) {
@@ -265,6 +267,16 @@ interface Props<
     CreateParams<RecordType> | UpdateParams<RecordType>
   >;
   transform?: TransformData;
+  redirect?:
+    | "list"
+    | "edit"
+    | "show"
+    | boolean
+    | ((
+        resource: string,
+        id: string | number,
+        data: RecordType,
+      ) => string | boolean);
   variant?:
     | "default"
     | "destructive"

@@ -1,4 +1,6 @@
 import { required, useTranslate } from "ra-core";
+import { useWatch } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { AutocompleteArrayInput } from "@/components/admin/autocomplete-array-input";
 import { ReferenceArrayInput } from "@/components/admin/reference-array-input";
 import { ReferenceInput } from "@/components/admin/reference-input";
@@ -64,8 +66,12 @@ const DealLinkedToInputs = () => {
 };
 
 const DealMiscInputs = () => {
-  const { dealStages, dealCategories } = useConfigurationContext();
+  const { dealStages, dealCategories, dealCycles, dealPipelineStatuses } = useConfigurationContext();
   const translate = useTranslate();
+  const { setValue } = useFormContext();
+  const stage = useWatch({ name: "stage" });
+  const isWon = stage && dealPipelineStatuses.includes(stage);
+
   return (
     <div className="flex flex-col gap-4 flex-1">
       <h3 className="text-base font-medium">
@@ -79,12 +85,21 @@ const DealMiscInputs = () => {
         optionValue="value"
         helperText={false}
       />
-      <NumberInput
-        source="amount"
-        defaultValue={0}
-        helperText={false}
-        validate={required()}
-      />
+      <div className="flex gap-4">
+        <NumberInput
+          source="amount"
+          defaultValue={0}
+          helperText={false}
+          validate={required()}
+          className="flex-1"
+        />
+        <NumberInput
+          source="maintenance_amount"
+          defaultValue={0}
+          helperText={false}
+          className="flex-1"
+        />
+      </div>
       <DateInput
         validate={required()}
         source="expected_closing_date"
@@ -99,6 +114,35 @@ const DealMiscInputs = () => {
         defaultValue="opportunity"
         helperText={false}
         validate={required()}
+        onChange={(e) => {
+          if (dealPipelineStatuses.includes(e.target.value)) {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, "0");
+            const day = String(d.getDate()).padStart(2, "0");
+            const today = `${year}-${month}-${day}`;
+            setValue("expected_closing_date", today);
+            setValue("won_date", today);
+          } else {
+            setValue("won_date", null);
+          }
+        }}
+      />
+      {isWon && (
+        <DateInput
+          source="won_date"
+          label="resources.deals.fields.won_date"
+          helperText={false}
+          validate={required()}
+          defaultValue={new Date().toISOString().split("T")[0]}
+        />
+      )}
+      <SelectInput
+        source="commercial_cycle"
+        choices={dealCycles}
+        optionText="label"
+        optionValue="value"
+        helperText={false}
       />
     </div>
   );

@@ -1,4 +1,5 @@
-import { required, useRecordContext, useTranslate } from "ra-core";
+import { required, useRecordContext, useTranslate, useNotify } from "ra-core";
+import { useFormContext } from "react-hook-form";
 import { ReferenceInput } from "@/components/admin/reference-input";
 import { TextInput } from "@/components/admin/text-input";
 import { SelectInput } from "@/components/admin/select-input";
@@ -124,6 +125,40 @@ const CompanyContextInputs = () => {
 
 const CompanyAddressInputs = () => {
   const translate = useTranslate();
+  const { setValue, getValues } = useFormContext();
+  const notify = useNotify();
+
+  const handleZipCodeBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const zipcode = e.target.value.replace(/\D/g, "");
+    if (zipcode.length === 8) {
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`);
+        const data = await response.json();
+
+        if (data.erro) {
+          notify("crm.notification.invalid_zipcode", {
+            type: "warning",
+            messageArgs: { _: "Invalid ZIP code" },
+          });
+          return;
+        }
+
+        const fullAddress = data.bairro
+          ? `${data.logradouro}, ${data.bairro}`
+          : data.logradouro;
+
+        setValue("address", fullAddress, { shouldDirty: true });
+        setValue("city", data.localidade, { shouldDirty: true });
+        setValue("state_abbr", data.uf, { shouldDirty: true });
+        if (!getValues("country")) {
+          setValue("country", "Brasil", { shouldDirty: true });
+        }
+      } catch (error) {
+        console.error("Error fetching address:", error);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <h6 className="text-lg font-semibold">
@@ -133,7 +168,11 @@ const CompanyAddressInputs = () => {
       </h6>
       <TextInput source="address" helperText={false} />
       <TextInput source="city" helperText={false} />
-      <TextInput source="zipcode" helperText={false} />
+      <TextInput
+        source="zipcode"
+        helperText={false}
+        onBlur={handleZipCodeBlur}
+      />
       <TextInput source="state_abbr" helperText={false} />
       <TextInput source="country" helperText={false} />
     </div>

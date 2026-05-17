@@ -124,6 +124,7 @@ const transformFormValues = (data: Record<string, any>) => ({
     currency: data.currency,
     companySectors: ensureValues(data.companySectors),
     dealCategories: ensureValues(data.dealCategories),
+    dealCycles: ensureValues(data.dealCycles),
     taskTypes: ensureValues(data.taskTypes),
     dealStages: ensureValues(data.dealStages),
     dealPipelineStatuses: data.dealPipelineStatuses,
@@ -172,6 +173,7 @@ const SettingsForm = () => {
       currency: config.currency,
       companySectors: config.companySectors,
       dealCategories: config.dealCategories,
+      dealCycles: config.dealCycles,
       taskTypes: config.taskTypes,
       dealStages: config.dealStages,
       dealPipelineStatuses: config.dealPipelineStatuses,
@@ -202,6 +204,9 @@ const SettingsFormFields = () => {
   const stageDisplayName = translate("crm.settings.validation.entities.stages");
   const categoryDisplayName = translate(
     "crm.settings.validation.entities.categories",
+  );
+  const cycleDisplayName = translate(
+    "crm.settings.validation.entities.cycles",
   );
 
   const { data: deals } = useGetList("deals", {
@@ -242,6 +247,23 @@ const SettingsFormFields = () => {
         validating: translate("crm.settings.validation.validating"),
       }),
     [categoryDisplayName, deals, translate],
+  );
+  const validateDealCycles = useCallback(
+    (cycles: { value: string; label: string }[] | undefined) =>
+      validateItemsInUse(cycles, deals, "commercial_cycle", cycleDisplayName, {
+        duplicate: (displayName, duplicates) =>
+          translate("crm.settings.validation.duplicate", {
+            display_name: displayName,
+            items: duplicates.join(", "),
+          }),
+        inUse: (displayName, inUse) =>
+          translate("crm.settings.validation.in_use", {
+            display_name: displayName,
+            items: inUse.join(", "),
+          }),
+        validating: translate("crm.settings.validation.validating"),
+      }),
+    [cycleDisplayName, deals, translate],
   );
 
   return (
@@ -416,6 +438,22 @@ const SettingsFormFields = () => {
               label={false}
               helperText={false}
               validate={validateDealCategories}
+            >
+              <SimpleFormIterator disableReordering disableClear>
+                <TextInput source="label" label={false} />
+              </SimpleFormIterator>
+            </ArrayInput>
+
+            <Separator />
+
+            <h3 className="text-lg font-medium text-muted-foreground">
+              {translate("crm.settings.deals.cycles")}
+            </h3>
+            <ArrayInput
+              source="dealCycles"
+              label={false}
+              helperText={false}
+              validate={validateDealCycles}
             >
               <SimpleFormIterator disableReordering disableClear>
                 <TextInput source="label" label={false} />

@@ -78,3 +78,13 @@ create or replace trigger on_auth_user_created
 create or replace trigger on_auth_user_updated
     after update on auth.users
     for each row execute function public.handle_update_user();
+
+-- Sync many-to-many relationship for contacts and companies
+create or replace trigger contact_companies_sync
+    after insert or update on public.contacts
+    for each row execute function public.sync_contact_companies();
+
+-- Auto-fill won_date when deal stage changes to 'won'
+create or replace trigger deal_won_date_sync
+    before update on public.deals
+    for each row execute function public.sync_deal_won_date();

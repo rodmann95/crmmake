@@ -453,3 +453,41 @@ BEGIN
   RETURN NEW;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION "public"."sync_contact_companies"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO 'public'
+    AS $$
+BEGIN
+    DELETE FROM public.contact_companies WHERE contact_id = NEW.id;
+    
+    IF NEW.company_ids IS NOT NULL THEN
+        INSERT INTO public.contact_companies (contact_id, company_id)
+        SELECT NEW.id, u.id
+        FROM unnest(NEW.company_ids) as u(id)
+        JOIN public.companies c ON c.id = u.id
+        ON CONFLICT DO NOTHING;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION "public"."sync_deal_won_date"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO 'public'
+    AS $$
+BEGIN
+    -- When stage changes TO won, auto-fill won_date only if not already set
+    IF NEW.stage IS DISTINCT FROM OLD.stage THEN
+        IF NEW.stage = 'won' AND NEW.won_date IS NULL THEN
+            NEW.won_date := CURRENT_DATE;
+        END IF;
+        -- Clear won_date if moved away from won
+        IF OLD.stage = 'won' AND NEW.stage <> 'won' THEN
+            NEW.won_date := NULL;
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$;

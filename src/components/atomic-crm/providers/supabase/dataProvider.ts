@@ -54,6 +54,40 @@ const getDataProviderWithCustomMethods = () => {
         return baseDataProvider.getList("companies_summary", params);
       }
       if (resource === "contacts") {
+        const { company_id, ...restFilter } = params.filter || {};
+        if (company_id) {
+          const supabase = getSupabaseClient();
+          // Use Supabase client directly: filter contacts whose company_ids array contains this company
+          const { data: rawContacts, error } = await supabase
+            .from("contacts")
+            .select("id")
+            .contains("company_ids", [Number(company_id)]);
+
+          if (error) {
+            console.error("Error fetching contacts by company_ids:", error);
+            return { data: [], total: 0 };
+          }
+
+          const contactIds = (rawContacts || []).map((c: any) => c.id);
+          if (contactIds.length === 0) {
+            return { data: [], total: 0 };
+          }
+
+          const result = await baseDataProvider.getList("contacts_summary", {
+            ...params,
+            filter: { ...restFilter, "id@in": `(${contactIds.join(",")})` },
+          });
+
+          // CRITICAL: ra-core's useReferenceManyFieldController does a client-side filter
+          // after fetching: record[target] === id (i.e. contact.company_id === company.id)
+          // We must override company_id on every returned contact using the EXACT same
+          // value/type as the parent record id to pass this check.
+          return {
+            ...result,
+            data: result.data.map((c) => ({ ...c, company_id })),
+          };
+        }
+
         return baseDataProvider.getList("contacts_summary", params);
       }
       if (resource === "activity_log") {
@@ -81,7 +115,7 @@ const getDataProviderWithCustomMethods = () => {
         return baseDataProvider.getOne("companies_summary", params);
       }
       if (resource === "contacts") {
-        return baseDataProvider.getOne("contacts_summary", params);
+        return baseDataProvider.getOne("contacts", params);
       }
 
       return baseDataProvider.getOne(resource, params);

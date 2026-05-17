@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   CreateBase,
   Form,
@@ -7,6 +8,7 @@ import {
   useGetRecordRepresentation,
   useNotify,
   useRecordContext,
+  useRefresh,
   useTranslate,
   useUpdate,
 } from "ra-core";
@@ -31,40 +33,69 @@ import { TaskFormContent } from "./TaskFormContent";
 
 export const AddTask = ({
   selectContact,
+  selectDeal,
   display = "chip",
+  record: recordProp,
 }: {
   selectContact?: boolean;
+  selectDeal?: boolean;
   display?: "chip" | "icon";
+  record?: any;
 }) => {
   const { identity } = useGetIdentity();
   const dataProvider = useDataProvider();
+  const refresh = useRefresh();
+  const queryClient = useQueryClient();
   const [update] = useUpdate();
   const notify = useNotify();
   const translate = useTranslate();
-  const contact = useRecordContext();
+  const contextRecord = useRecordContext();
+  const record = recordProp || contextRecord;
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
   const getContactRepresentation = useGetRecordRepresentation("contacts");
+  const getDealRepresentation = useGetRecordRepresentation("deals");
 
   const handleSuccess = async (data: any) => {
     setOpen(false);
-    const contact = await dataProvider.getOne("contacts", {
-      id: data.contact_id,
-    });
-    if (!contact.data) return;
+    
+    if (data.contact_id) {
+      const contact = await dataProvider.getOne("contacts", {
+        id: data.contact_id,
+      });
+      if (contact.data) {
+        await update("contacts", {
+          id: contact.data.id,
+          data: { last_seen: new Date().toISOString() },
+          previousData: contact.data,
+        });
+      }
+    }
 
-    await update("contacts", {
-      id: contact.data.id,
-      data: { last_seen: new Date().toISOString() },
-      previousData: contact.data,
-    });
+    if (data.deal_id) {
+      const deal = await dataProvider.getOne("deals", {
+        id: data.deal_id,
+      });
+      if (deal.data) {
+        await update("deals", {
+          id: deal.data.id,
+          data: { updated_at: new Date().toISOString() },
+          previousData: deal.data,
+        });
+      }
+    }
 
     notify("resources.tasks.added");
+    refresh();
+    queryClient.invalidateQueries({ queryKey: ["tasks"] });
   };
 
   if (!identity) return null;
+
+  const isForContact = !!record?.first_name;
+  const isForDeal = !!record?.name && !record?.first_name;
 
   return (
     <>
@@ -104,10 +135,16 @@ export const AddTask = ({
         resource="tasks"
         record={{
           type: "none",
-          contact_id: contact?.id,
+          contact_id: isForContact ? record.id : undefined,
+          deal_id: isForDeal ? record.id : undefined,
           due_date: new Date().toISOString(),
           sales_id: identity.id,
         }}
+        transform={(data) => ({
+          ...data,
+          contact_id: isForContact ? record.id : data.contact_id,
+          deal_id: isForDeal ? record.id : data.deal_id,
+        })}
         mutationOptions={{ onSuccess: handleSuccess }}
       >
         <Dialog open={open} onOpenChange={() => setOpen(false)}>
@@ -115,14 +152,21 @@ export const AddTask = ({
             <Form className="flex flex-col gap-4">
               <DialogHeader>
                 <DialogTitle>
-                  {!selectContact
+                  {isForContact
                     ? translate("resources.tasks.dialog.create_for", {
-                        name: getContactRepresentation(contact!),
+                        name: getContactRepresentation(record),
                       })
-                    : translate("resources.tasks.dialog.create")}
+                    : isForDeal
+                      ? translate("resources.tasks.dialog.create_for", {
+                          name: getDealRepresentation(record),
+                        })
+                      : translate("resources.tasks.dialog.create")}
                 </DialogTitle>
               </DialogHeader>
-              <TaskFormContent selectContact={selectContact} />
+              <TaskFormContent
+                selectContact={selectContact}
+                selectDeal={selectDeal}
+              />
               <DialogFooter className="w-full justify-end">
                 <SaveButton />
               </DialogFooter>

@@ -11,6 +11,7 @@ type TaskListProps = {
   tasks: any[];
   title: string;
   showContact?: boolean;
+  showDeal?: boolean;
   isMobile: boolean;
 };
 
@@ -18,6 +19,7 @@ export const TaskListFilter = ({
   tasks,
   title,
   showContact,
+  showDeal,
   isMobile,
 }: TaskListProps) => {
   const translate = useTranslate();
@@ -38,7 +40,7 @@ export const TaskListFilter = ({
       </p>
       <ResourceContextProvider value="tasks">
         <ListContextProvider value={listContext}>
-          <TasksIterator showContact={showContact} />
+          <TasksIterator showContact={showContact} showDeal={showDeal} />
         </ListContextProvider>
       </ResourceContextProvider>
       {total > listContext.perPage && (

@@ -10,6 +10,7 @@ export interface ConfigurationContextValue {
   companySectors: LabeledValue[];
   currency: string;
   dealCategories: LabeledValue[];
+  dealCycles: LabeledValue[];
   dealPipelineStatuses: string[];
   dealStages: DealStage[];
   noteStatuses: NoteStatus[];

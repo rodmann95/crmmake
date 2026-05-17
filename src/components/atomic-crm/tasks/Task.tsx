@@ -28,9 +28,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export const Task = ({
   task,
   showContact,
+  showDeal,
 }: {
   task: TData;
   showContact?: boolean;
+  showDeal?: boolean;
 }) => {
   const isMobile = useIsMobile();
   const { taskTypes } = useConfigurationContext();
@@ -38,6 +40,7 @@ export const Task = ({
   const translate = useTranslate();
   const queryClient = useQueryClient();
   const getContactRepresentation = useGetRecordRepresentation("contacts");
+  const getDealRepresentation = useGetRecordRepresentation("deals");
 
   const [openEdit, setOpenEdit] = useState(false);
 
@@ -121,24 +124,48 @@ export const Task = ({
               )}
               {task.text}
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground mt-1">
               {translate("resources.tasks.fields.due_short")}
               &nbsp;
               <DateField source="due_date" record={task} showDate showTime />
+              {(showContact || showDeal) && (
+                <span className="mx-1 text-muted-foreground/50">•</span>
+              )}
               {showContact && (
                 <ReferenceField<TData, Contact>
                   source="contact_id"
                   reference="contacts"
                   record={task}
                   link="show"
-                  className="inline text-sm text-muted-foreground"
+                  className="inline text-sm font-medium text-foreground hover:underline"
                   render={({ referenceRecord }) => {
                     if (!referenceRecord) return null;
                     return (
                       <>
-                        {" "}
                         {translate("resources.tasks.regarding_contact", {
                           name: getContactRepresentation(referenceRecord),
+                        })}
+                      </>
+                    );
+                  }}
+                />
+              )}
+              {showContact && showDeal && task.deal_id && (
+                <span className="mx-1 text-muted-foreground/50">•</span>
+              )}
+              {showDeal && (
+                <ReferenceField<TData, any>
+                  source="deal_id"
+                  reference="deals"
+                  record={task}
+                  link="show"
+                  className="inline text-sm font-bold text-primary hover:underline"
+                  render={({ referenceRecord }) => {
+                    if (!referenceRecord) return null;
+                    return (
+                      <>
+                        {translate("resources.tasks.regarding_deal", {
+                          name: getDealRepresentation(referenceRecord),
                         })}
                       </>
                     );

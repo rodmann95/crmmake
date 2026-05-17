@@ -8,6 +8,7 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import { ImportPage } from "../misc/ImportPage";
+import { TasksPage } from "../tasks/TasksPage";
 import { ChangelogPage } from "../misc/ChangelogPage";
 
 const Header = () => {
@@ -24,6 +25,8 @@ const Header = () => {
     currentPath = "/companies";
   } else if (matchPath("/deals/*", location.pathname)) {
     currentPath = "/deals";
+  } else if (matchPath(`${TasksPage.path}/*`, location.pathname)) {
+    currentPath = TasksPage.path;
   } else {
     currentPath = false;
   }
@@ -77,6 +80,13 @@ const Header = () => {
                     })}
                     to="/deals"
                     isActive={currentPath === "/deals"}
+                  />
+                  <NavigationTab
+                    label={translate("resources.tasks.name", {
+                      smart_count: 2,
+                    })}
+                    to={TasksPage.path}
+                    isActive={currentPath === TasksPage.path}
                   />
                 </nav>
               </div>

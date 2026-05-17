@@ -72,7 +72,7 @@ export const DealListContent = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex gap-4">
+      <div className="flex gap-5 overflow-x-auto pb-8 pt-2 snap-x px-1 custom-scrollbar min-h-[70vh]">
         {dealStages.map((stage) => (
           <DealColumn
             stage={stage.value}

@@ -86,6 +86,7 @@ export type Contact = {
   last_name: string;
   title: string;
   company_id?: Identifier | null;
+  company_ids?: Identifier[];
   email_jsonb: EmailAndType[];
   avatar?: Partial<RAFile>;
   linkedin_url?: string | null;
@@ -119,6 +120,8 @@ export type Deal = {
   stage: string;
   description: string;
   amount: number;
+  maintenance_amount?: number;
+  commercial_cycle?: string;
   created_at: string;
   updated_at: string;
   archived_at?: string;
@@ -145,7 +148,8 @@ export type Tag = {
 };
 
 export type Task = {
-  contact_id: Identifier;
+  contact_id?: Identifier | null;
+  deal_id?: Identifier | null;
   type: string;
   text: string;
   due_date: string;
