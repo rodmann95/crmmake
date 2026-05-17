@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "start": "node server.js",
     "test:unit:app": "vitest --config vitest.config.ts",
     "test:unit:functions": "vitest --config vitest.functions.config.ts",
     "dev": "vite --force",
