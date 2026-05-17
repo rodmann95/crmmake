@@ -64,13 +64,14 @@ const DealLinkedToInputs = () => {
     </div>
   );
 };
-
 const DealMiscInputs = () => {
-  const { dealStages, dealCategories, dealCycles, dealPipelineStatuses } = useConfigurationContext();
+  const { dealStages, dealCategories, dealCycles, dealPipelineStatuses, currency } = useConfigurationContext();
   const translate = useTranslate();
   const { setValue } = useFormContext();
   const stage = useWatch({ name: "stage" });
   const isWon = stage && dealPipelineStatuses.includes(stage);
+  const maintenanceAmount = useWatch({ name: "maintenance_amount" }) || 0;
+  const projectedMaintenance = maintenanceAmount * 12;
 
   return (
     <div className="flex flex-col gap-4 flex-1">
@@ -94,11 +95,32 @@ const DealMiscInputs = () => {
           className="flex-1"
         />
         <NumberInput
+          source="installments"
+          label="Parcelas"
+          defaultValue={1}
+          helperText={false}
+          className="flex-1"
+        />
+      </div>
+      <div className="flex gap-4">
+        <NumberInput
           source="maintenance_amount"
           defaultValue={0}
           helperText={false}
           className="flex-1"
         />
+        <div className="flex-1 flex flex-col justify-end">
+          <span className="text-[11px] font-medium text-muted-foreground uppercase mb-1">
+            Valor Projetado Sustentação
+          </span>
+          <div className="h-10 px-3 py-2 rounded-md border border-input bg-muted/40 text-sm flex items-center font-medium">
+            {projectedMaintenance.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: currency || "BRL",
+            })}
+            <span className="text-[10px] text-muted-foreground ml-1">/ano</span>
+          </div>
+        </div>
       </div>
       <DateInput
         validate={required()}

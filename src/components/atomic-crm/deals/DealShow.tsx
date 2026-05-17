@@ -113,21 +113,49 @@ const DealShowContent = () => {
             </p>
           </div>
 
-          {record.maintenance_amount != null && (
+          {record.installments != null && (
             <div className="space-y-1 min-w-[140px]">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                {translate("resources.deals.fields.maintenance_amount")}
+                Parcelas
               </p>
-              <p className="text-lg font-semibold text-emerald-600">
-                {record.maintenance_amount.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency,
-                })}
-                <span className="text-xs font-normal text-muted-foreground ml-1">
-                  /mês
-                </span>
+              <p className="text-lg font-semibold text-primary">
+                {record.installments}
               </p>
             </div>
+          )}
+
+          {record.maintenance_amount != null && (
+            <>
+              <div className="space-y-1 min-w-[140px]">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  {translate("resources.deals.fields.maintenance_amount")}
+                </p>
+                <p className="text-lg font-semibold text-emerald-600">
+                  {record.maintenance_amount.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency,
+                  })}
+                  <span className="text-xs font-normal text-muted-foreground ml-1">
+                    /mês
+                  </span>
+                </p>
+              </div>
+
+              <div className="space-y-1 min-w-[140px]">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Valor Proj. Sustentação
+                </p>
+                <p className="text-lg font-semibold text-emerald-600">
+                  {(record.maintenance_amount * 12).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency,
+                  })}
+                  <span className="text-xs font-normal text-muted-foreground ml-1">
+                    /ano
+                  </span>
+                </p>
+              </div>
+            </>
           )}
 
           <div className="space-y-1 min-w-[140px] max-w-[250px]">

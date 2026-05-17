@@ -73,6 +73,7 @@ create table public.deals (
     description text,
     amount bigint,
     maintenance_amount bigint,
+    installments integer,
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
     archived_at timestamp with time zone,

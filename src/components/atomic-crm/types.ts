@@ -121,6 +121,7 @@ export type Deal = {
   description: string;
   amount: number;
   maintenance_amount?: number;
+  installments?: number;
   commercial_cycle?: string;
   created_at: string;
   updated_at: string;
