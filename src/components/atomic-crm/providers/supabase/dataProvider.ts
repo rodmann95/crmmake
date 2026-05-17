@@ -23,7 +23,7 @@ import { getSupabaseClient } from "./supabase";
 const getBaseDataProvider = () =>
   supabaseDataProvider({
     instanceUrl: import.meta.env.VITE_SUPABASE_URL,
-    apiKey: import.meta.env.VITE_SB_PUBLISHABLE_KEY,
+    apiKey: import.meta.env.VITE_SB_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY,
     supabaseClient: getSupabaseClient(),
     sortOrder: "asc,desc.nullslast" as any,
   });
@@ -393,9 +393,12 @@ export const getDataProvider = () => {
   if (import.meta.env.VITE_SUPABASE_URL === undefined) {
     throw new Error("Please set the VITE_SUPABASE_URL environment variable");
   }
-  if (import.meta.env.VITE_SB_PUBLISHABLE_KEY === undefined) {
+  if (
+    import.meta.env.VITE_SB_PUBLISHABLE_KEY === undefined &&
+    import.meta.env.VITE_SUPABASE_ANON_KEY === undefined
+  ) {
     throw new Error(
-      "Please set the VITE_SB_PUBLISHABLE_KEY environment variable",
+      "Please set the VITE_SB_PUBLISHABLE_KEY or VITE_SUPABASE_ANON_KEY environment variable",
     );
   }
   return withLifecycleCallbacks(

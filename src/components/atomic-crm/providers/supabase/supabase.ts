@@ -7,7 +7,7 @@ export const getSupabaseClient = () => {
   if (!supabaseClient) {
     supabaseClient = createClient(
       import.meta.env.VITE_SUPABASE_URL,
-      import.meta.env.VITE_SB_PUBLISHABLE_KEY,
+      import.meta.env.VITE_SB_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY,
     );
   }
   return supabaseClient;
