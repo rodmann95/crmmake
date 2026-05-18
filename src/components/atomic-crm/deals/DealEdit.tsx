@@ -30,7 +30,7 @@ export const DealEdit = ({ open, id }: { open: boolean; id?: string }) => {
 
   return (
     <Dialog open={open} onOpenChange={() => handleClose()}>
-      <DialogContent className="lg:max-w-4xl p-4 overflow-y-auto max-h-9/10 top-1/20 translate-y-0">
+      <DialogContent className="w-full max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl p-0 overflow-y-auto h-full sm:h-auto max-h-screen sm:max-h-[90vh] rounded-none sm:rounded-xl border-none sm:border">
         {id ? (
           <EditBase
             id={id}
@@ -46,8 +46,10 @@ export const DealEdit = ({ open, id }: { open: boolean; id?: string }) => {
           >
             <EditHeader />
             <Form>
-              <DealInputs />
-              <FormToolbar />
+              <div className="p-4 sm:p-6 space-y-6">
+                <DealInputs />
+                <FormToolbar />
+              </div>
             </Form>
           </EditBase>
         ) : null}
@@ -65,15 +67,15 @@ function EditHeader() {
   }
 
   return (
-    <DialogTitle className="pb-0">
-      <div className="flex justify-between items-start mb-8">
-        <div className="flex items-center gap-4">
+    <DialogTitle className="pb-0 p-4 sm:p-6 border-b bg-muted/30">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4 pr-6">
+        <div className="flex items-center gap-3 sm:gap-4">
           <ReferenceField source="company_id" reference="companies" link="show">
             <CompanyAvatar />
           </ReferenceField>
-          <h2 className="text-2xl font-semibold">{defaultTitle}</h2>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">{defaultTitle}</h2>
         </div>
-        <div className="flex gap-2 pr-12">
+        <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start">
           <DeleteButton />
           <Button asChild variant="outline" className="h-9">
             <Link to={`/deals/${deal.id}/show`}>
