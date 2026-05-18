@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
+    "heroku-prebuild": "node ./scripts/heroku-prebuild.js",
     "test:unit:app": "vitest --config vitest.config.ts",
     "test:unit:functions": "vitest --config vitest.functions.config.ts",
     "dev": "vite --force",
