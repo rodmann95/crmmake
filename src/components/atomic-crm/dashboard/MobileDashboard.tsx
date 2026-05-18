@@ -8,6 +8,8 @@ import type { Contact, ContactNote } from "../types";
 import { DashboardActivityLog } from "./DashboardActivityLog";
 import { DashboardStepper } from "./DashboardStepper";
 import { Welcome } from "./Welcome";
+import { DealsChart } from "./DealsChart";
+import { MaintenanceChart } from "./MaintenanceChart";
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
 import { useConfigurationContext } from "../root/ConfigurationContext";
@@ -63,9 +65,12 @@ export const MobileDashboard = () => {
     useGetList<ContactNote>("contact_notes", {
       pagination: { page: 1, perPage: 1 },
     });
+  const { total: totalDeal, isPending: isPendingDeal } = useGetList("deals", {
+    pagination: { page: 1, perPage: 1 },
+  });
   const oneSecondHasPassed = useTimeout(1000);
 
-  const isPending = isPendingContact || isPendingContactNotes;
+  const isPending = isPendingContact || isPendingContactNotes || isPendingDeal;
 
   if (isPending) {
     return oneSecondHasPassed ? <Loading /> : null;
@@ -89,8 +94,10 @@ export const MobileDashboard = () => {
 
   return (
     <Wrapper>
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-1">
+      <div className="flex flex-col gap-6 mt-1">
         {import.meta.env.VITE_IS_DEMO === "true" ? <Welcome /> : null}
+        {totalDeal ? <DealsChart /> : null}
+        {totalDeal ? <MaintenanceChart /> : null}
         <DashboardActivityLog />
       </div>
     </Wrapper>

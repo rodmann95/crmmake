@@ -111,7 +111,7 @@ export const DealCardContent = ({
                   reference="companies"
                   link={false}
                 >
-                  <CompanyAvatar width={28} height={28} />
+                  <CompanyAvatar width={40} height={40} />
                 </ReferenceField>
               </div>
             </div>
