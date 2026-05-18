@@ -79,37 +79,42 @@ export const DealCardContent = ({
               </div>
             </div>
             
-            <div className="flex items-center justify-between mt-1">
-              <p className="text-sm font-extrabold text-foreground tracking-tight flex items-center gap-1">
-                <NumberField
-                  source="amount"
-                  options={{
-                    notation: "compact",
+            <div className="flex flex-col gap-1.5 mt-1 border-t border-border/30 pt-2 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Desenv.</span>
+                <span className="font-bold text-foreground">
+                  {(deal.amount || 0).toLocaleString("pt-BR", {
                     style: "currency",
                     currency,
-                    currencyDisplay: "narrowSymbol",
-                    minimumSignificantDigits: 3,
-                  }}
-                />
-                {deal.maintenance_amount != null && deal.maintenance_amount > 0 && (
-                  <span className="text-xs text-muted-foreground font-medium flex items-center">
-                    {" + "}
-                    <NumberField
-                      source="maintenance_amount"
-                      options={{
-                        notation: "compact",
-                        style: "currency",
-                        currency,
-                        currencyDisplay: "narrowSymbol",
-                        minimumSignificantDigits: 3,
-                      }}
-                    />
-                    <span className="ml-0.5">/mês</span>
-                  </span>
-                )}
-              </p>
-              {deal.category && (
-                <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+                    maximumFractionDigits: 0,
+                  })}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Sust. Mês</span>
+                <span className="font-bold text-blue-600 dark:text-blue-400">
+                  {(deal.maintenance_amount || 0).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency,
+                    maximumFractionDigits: 0,
+                  })}
+                </span>
+              </div>
+              <div className="flex justify-between items-center border-t border-border/10 pt-1">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Sust. Proj.</span>
+                <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
+                  {((deal.maintenance_amount || 0) * 12).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency,
+                    maximumFractionDigits: 0,
+                  })}
+                </span>
+              </div>
+            </div>
+
+            {deal.category && (
+              <div className="flex justify-end mt-1">
+                <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
                   <SelectField
                     source="category"
                     choices={dealCategories}
@@ -117,8 +122,8 @@ export const DealCardContent = ({
                     optionValue="value"
                   />
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </RecordContextProvider>

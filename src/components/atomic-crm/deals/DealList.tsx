@@ -98,7 +98,7 @@ const DealLayout = () => {
     );
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-full overflow-hidden">
       <DealListContent />
       <DealArchivedList />
       <DealCreate open={!!matchCreate} />
