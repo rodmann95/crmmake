@@ -5,6 +5,7 @@ import type { Contact, ContactNote } from "../types";
 import { DashboardActivityLog } from "./DashboardActivityLog";
 import { DashboardStepper } from "./DashboardStepper";
 import { DealsChart } from "./DealsChart";
+import { NegotiationValueChart } from "./NegotiationValueChart";
 import { MaintenanceChart } from "./MaintenanceChart";
 import { AccumulatedChart } from "./AccumulatedChart";
 import { SectorChart } from "./SectorChart";
@@ -91,6 +92,7 @@ export const Dashboard = () => {
         <div className="md:col-span-6">
           <div className="flex flex-col gap-6">
             {totalDeal ? <DealsChart selectedCycle={selectedCycle} /> : null}
+            {totalDeal ? <NegotiationValueChart selectedCycle={selectedCycle} /> : null}
             {totalDeal ? <MaintenanceChart selectedCycle={selectedCycle} /> : null}
             {totalDeal ? <AccumulatedChart selectedCycle={selectedCycle} /> : null}
             {totalDeal ? <SectorChart selectedCycle={selectedCycle} /> : null}

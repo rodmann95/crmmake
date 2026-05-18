@@ -10,6 +10,7 @@ import { DashboardActivityLog } from "./DashboardActivityLog";
 import { DashboardStepper } from "./DashboardStepper";
 import { Welcome } from "./Welcome";
 import { DealsChart } from "./DealsChart";
+import { NegotiationValueChart } from "./NegotiationValueChart";
 import { MaintenanceChart } from "./MaintenanceChart";
 import { AccumulatedChart } from "./AccumulatedChart";
 import { SectorChart } from "./SectorChart";
@@ -132,6 +133,7 @@ export const MobileDashboard = () => {
         </Card>
 
         {totalDeal ? <DealsChart selectedCycle={selectedCycle} /> : null}
+        {totalDeal ? <NegotiationValueChart selectedCycle={selectedCycle} /> : null}
         {totalDeal ? <MaintenanceChart selectedCycle={selectedCycle} /> : null}
         {totalDeal ? <AccumulatedChart selectedCycle={selectedCycle} /> : null}
         {totalDeal ? <SectorChart selectedCycle={selectedCycle} /> : null}
