@@ -41,7 +41,7 @@ export const DealShow = ({ open, id }: { open: boolean; id?: string }) => {
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="lg:max-w-4xl p-4 overflow-y-auto max-h-9/10 top-1/20 translate-y-0">
+      <DialogContent className="w-full max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl p-0 overflow-y-auto h-full sm:h-auto max-h-screen sm:max-h-[90vh] rounded-none sm:rounded-xl border-none sm:border">
         {id ? (
           <ShowBase id={id}>
             <DealShowContent />
@@ -63,9 +63,9 @@ const DealShowContent = () => {
       {record.archived_at ? <ArchivedTitle /> : null}
 
       {/* Header Section */}
-      <div className="p-6 border-b bg-muted/30">
-        <div className="flex justify-between items-start mb-6">
-          <div className="flex items-center gap-4">
+      <div className="p-4 sm:p-6 border-b bg-muted/30">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 pr-6">
+          <div className="flex items-center gap-3 sm:gap-4">
             <ReferenceField
               source="company_id"
               reference="companies"
@@ -74,18 +74,18 @@ const DealShowContent = () => {
               <CompanyAvatar />
             </ReferenceField>
             <div>
-              <h2 className="text-2xl font-bold tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
                 {record.name}
               </h2>
               <ReferenceField
                 source="company_id"
                 reference="companies"
                 link="show"
-                className="text-muted-foreground hover:underline"
+                className="text-sm text-muted-foreground hover:underline"
               />
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start">
             {record.archived_at ? (
               <>
                 <UnarchiveButton record={record} />
@@ -100,12 +100,12 @@ const DealShowContent = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-start gap-y-6 gap-x-12">
-          <div className="space-y-1 min-w-[140px]">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-start gap-4 sm:gap-y-6 sm:gap-x-12">
+          <div className="space-y-1 min-w-[120px] sm:min-w-[140px]">
+            <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">
               {translate("resources.deals.fields.amount")}
             </p>
-            <p className="text-lg font-semibold text-primary">
+            <p className="text-base sm:text-lg font-semibold text-primary">
               {record.amount.toLocaleString("pt-BR", {
                 style: "currency",
                 currency,
@@ -114,11 +114,11 @@ const DealShowContent = () => {
           </div>
 
           {record.installments != null && (
-            <div className="space-y-1 min-w-[140px]">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <div className="space-y-1 min-w-[120px] sm:min-w-[140px]">
+              <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Parcelas
               </p>
-              <p className="text-lg font-semibold text-primary">
+              <p className="text-base sm:text-lg font-semibold text-primary">
                 {record.installments}
               </p>
             </div>
@@ -126,31 +126,31 @@ const DealShowContent = () => {
 
           {record.maintenance_amount != null && (
             <>
-              <div className="space-y-1 min-w-[140px]">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <div className="space-y-1 min-w-[120px] sm:min-w-[140px]">
+                <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   {translate("resources.deals.fields.maintenance_amount")}
                 </p>
-                <p className="text-lg font-semibold text-emerald-600">
+                <p className="text-base sm:text-lg font-semibold text-emerald-600">
                   {record.maintenance_amount.toLocaleString("pt-BR", {
                     style: "currency",
                     currency,
                   })}
-                  <span className="text-xs font-normal text-muted-foreground ml-1">
+                  <span className="text-[10px] sm:text-xs font-normal text-muted-foreground ml-1">
                     /mês
                   </span>
                 </p>
               </div>
 
-              <div className="space-y-1 min-w-[140px]">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <div className="space-y-1 min-w-[120px] sm:min-w-[140px]">
+                <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Valor Proj. Sustentação
                 </p>
-                <p className="text-lg font-semibold text-emerald-600">
+                <p className="text-base sm:text-lg font-semibold text-emerald-600">
                   {(record.maintenance_amount * 12).toLocaleString("pt-BR", {
                     style: "currency",
                     currency,
                   })}
-                  <span className="text-xs font-normal text-muted-foreground ml-1">
+                  <span className="text-[10px] sm:text-xs font-normal text-muted-foreground ml-1">
                     /ano
                   </span>
                 </p>
@@ -158,31 +158,31 @@ const DealShowContent = () => {
             </>
           )}
 
-          <div className="space-y-1 min-w-[140px] max-w-[250px]">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <div className="space-y-1 min-w-[120px] sm:min-w-[140px] max-w-[250px]">
+            <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">
               {translate("resources.deals.fields.stage")}
             </p>
             <Badge
               variant="secondary"
-              className="px-3 py-1 text-sm font-medium h-auto whitespace-normal text-left"
+              className="px-2 py-0.5 sm:px-3 sm:py-1 text-xs sm:text-sm font-medium h-auto whitespace-normal text-left"
             >
               {findDealLabel(dealStages, record.stage)}
             </Badge>
           </div>
 
-          <div className="space-y-1 min-w-[140px]">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider leading-tight break-words">
+          <div className="space-y-1 min-w-[120px] sm:min-w-[140px]">
+            <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider leading-tight break-words">
               {translate("resources.deals.fields.expected_closing_date")}
             </p>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">
+              <span className="text-xs sm:text-sm font-medium">
                 {isValid(new Date(record.expected_closing_date))
                   ? formatISODateString(record.expected_closing_date)
                   : "N/A"}
               </span>
               {new Date(record.expected_closing_date) < new Date() &&
               !record.archived_at ? (
-                <Badge variant="destructive" className="text-[10px] uppercase">
+                <Badge variant="destructive" className="text-[9px] sm:text-[10px] uppercase px-1 py-0">
                   {translate("crm.common.past")}
                 </Badge>
               ) : null}
@@ -193,8 +193,8 @@ const DealShowContent = () => {
 
       {/* Tabs Section */}
       <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
-        <div className="px-6 border-b bg-background sticky top-0 z-10">
-          <TabsList className="h-12 w-full justify-start bg-transparent p-0 gap-6">
+        <div className="px-4 sm:px-6 border-b bg-background sticky top-0 z-10">
+          <TabsList className="h-12 w-full justify-start bg-transparent p-0 gap-4 sm:gap-6 overflow-x-auto whitespace-nowrap scrollbar-none">
             <TabsTrigger
               value="overview"
               className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
@@ -217,22 +217,22 @@ const DealShowContent = () => {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          <TabsContent value="overview" className="p-6 m-0 space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <TabsContent value="overview" className="p-4 sm:p-6 m-0 space-y-6 sm:space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               <div className="md:col-span-2 space-y-6">
                 {record.description && (
                   <div className="space-y-2">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                    <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                       {translate("resources.deals.fields.description")}
                     </h3>
-                    <p className="text-sm leading-relaxed text-foreground whitespace-pre-line bg-muted/20 p-4 rounded-lg border border-border/50">
+                    <p className="text-xs sm:text-sm leading-relaxed text-foreground whitespace-pre-line bg-muted/20 p-4 rounded-lg border border-border/50">
                       {record.description}
                     </p>
                   </div>
                 )}
 
                 <div className="space-y-4">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                     {translate("resources.deals.fields.contact_ids")}
                   </h3>
                   {!!record.contact_ids?.length ? (
@@ -243,7 +243,7 @@ const DealShowContent = () => {
                       <ContactList />
                     </ReferenceArrayField>
                   ) : (
-                    <p className="text-sm text-muted-foreground italic">
+                    <p className="text-xs sm:text-sm text-muted-foreground italic">
                       Nenhum contato vinculado.
                     </p>
                   )}
@@ -252,12 +252,12 @@ const DealShowContent = () => {
 
               <div className="space-y-6">
                 <div className="p-4 rounded-xl border bg-card shadow-sm space-y-4">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                     Metadata
                   </h3>
                   <div className="space-y-3">
                     {record.category && (
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs sm:text-sm">
                         <span className="text-muted-foreground">
                           {translate("resources.deals.fields.category")}
                         </span>
@@ -269,7 +269,7 @@ const DealShowContent = () => {
                       </div>
                     )}
                     {record.commercial_cycle && (
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs sm:text-sm">
                         <span className="text-muted-foreground">
                           {translate("resources.deals.fields.commercial_cycle")}
                         </span>
@@ -278,7 +278,7 @@ const DealShowContent = () => {
                         </span>
                       </div>
                     )}
-                    <div className="flex justify-between text-sm border-t pt-3 mt-3">
+                    <div className="flex justify-between text-xs sm:text-sm border-t pt-3 mt-3">
                       <span className="text-muted-foreground">Criado em</span>
                       <span className="font-medium text-right">
                         {formatISODateString(record.created_at)}
@@ -290,7 +290,7 @@ const DealShowContent = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="activity" className="p-6 m-0">
+          <TabsContent value="activity" className="p-4 sm:p-6 m-0">
             <InfiniteListBase
               resource="deal_notes"
               filter={{ deal_id: record.id }}
@@ -308,7 +308,7 @@ const DealShowContent = () => {
             </InfiniteListBase>
           </TabsContent>
 
-          <TabsContent value="tasks" className="p-6 m-0">
+          <TabsContent value="tasks" className="p-4 sm:p-6 m-0">
             <InfiniteListBase
               resource="tasks"
               filter={{ deal_id: record.id }}
@@ -319,7 +319,7 @@ const DealShowContent = () => {
             >
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">
+                  <h3 className="text-base sm:text-lg font-semibold">
                     {translate("resources.tasks.name", { smart_count: 2 })}
                   </h3>
                   <AddTask
