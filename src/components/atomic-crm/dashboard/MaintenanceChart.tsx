@@ -21,7 +21,7 @@ const threeMonthsAgo = new Date(
 
 const DEFAULT_LOCALE = "pt-BR";
 
-export const MaintenanceChart = memo(() => {
+export const MaintenanceChart = memo(({ selectedCycle }: { selectedCycle: string }) => {
   const translate = useTranslate();
   const { dealStages, currency } = useConfigurationContext();
   const acceptedLanguages = navigator
@@ -37,7 +37,7 @@ export const MaintenanceChart = memo(() => {
       order: "ASC",
     },
     filter: {
-      "created_at@gte": threeMonthsAgo,
+      ...(selectedCycle === "all" ? { "created_at@gte": threeMonthsAgo } : { commercial_cycle: selectedCycle }),
     },
   });
 

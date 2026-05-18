@@ -1,4 +1,5 @@
 import { useGetList, useTimeout } from "ra-core";
+import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { Button } from "@/components/ui/button";
@@ -10,9 +11,13 @@ import { DashboardStepper } from "./DashboardStepper";
 import { Welcome } from "./Welcome";
 import { DealsChart } from "./DealsChart";
 import { MaintenanceChart } from "./MaintenanceChart";
+import { AccumulatedChart } from "./AccumulatedChart";
+import { SectorChart } from "./SectorChart";
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
 import { useConfigurationContext } from "../root/ConfigurationContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const { darkModeLogo, lightModeLogo, title } = useConfigurationContext();
@@ -54,6 +59,9 @@ const Loading = () => (
 );
 
 export const MobileDashboard = () => {
+  const [selectedCycle, setSelectedCycle] = useState<string>("all");
+  const { dealCycles } = useConfigurationContext();
+
   const {
     data: dataContact,
     total: totalContact,
@@ -94,10 +102,39 @@ export const MobileDashboard = () => {
 
   return (
     <Wrapper>
-      <div className="flex flex-col gap-6 mt-1">
+      <div className="flex flex-col gap-6 mt-1 pb-16">
         {import.meta.env.VITE_IS_DEMO === "true" ? <Welcome /> : null}
-        {totalDeal ? <DealsChart /> : null}
-        {totalDeal ? <MaintenanceChart /> : null}
+
+        {/* Mobile Filter Bar */}
+        <Card className="bg-card border shadow-sm">
+          <CardContent className="p-4 flex flex-col gap-3">
+            <div>
+              <h2 className="text-lg font-bold tracking-tight">Dashboard Comercial</h2>
+              <p className="text-xs text-muted-foreground">Monitore o desempenho do funil</p>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Ciclo Comercial</span>
+              <Select value={selectedCycle} onValueChange={setSelectedCycle}>
+                <SelectTrigger className="w-[140px] bg-background text-xs h-9">
+                  <SelectValue placeholder="Selecione o Ciclo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all" className="text-xs">Todos os Ciclos</SelectItem>
+                  {dealCycles.map((cycle) => (
+                    <SelectItem key={cycle.value} value={cycle.value} className="text-xs">
+                      {cycle.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {totalDeal ? <DealsChart selectedCycle={selectedCycle} /> : null}
+        {totalDeal ? <MaintenanceChart selectedCycle={selectedCycle} /> : null}
+        {totalDeal ? <AccumulatedChart selectedCycle={selectedCycle} /> : null}
+        {totalDeal ? <SectorChart selectedCycle={selectedCycle} /> : null}
         <DashboardActivityLog />
       </div>
     </Wrapper>
