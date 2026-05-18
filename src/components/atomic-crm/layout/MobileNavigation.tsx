@@ -117,6 +117,7 @@ const NavigationButton = ({
 const CreateButton = () => {
   const translate = useTranslate();
   const contact_id = useMatch("/contacts/:id/*")?.params.id;
+  const deal_id = useMatch("/deals/:id/*")?.params.id;
   const [contactCreateOpen, setContactCreateOpen] = useState(false);
   const [companyCreateOpen, setCompanyCreateOpen] = useState(false);
   const [noteCreateOpen, setNoteCreateOpen] = useState(false);
@@ -141,6 +142,7 @@ const CreateButton = () => {
         open={taskCreateOpen}
         onOpenChange={setTaskCreateOpen}
         contact_id={contact_id}
+        deal_id={deal_id}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
