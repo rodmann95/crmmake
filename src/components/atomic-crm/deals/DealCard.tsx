@@ -1,13 +1,47 @@
 import { Draggable } from "@hello-pangea/dnd";
-import { useRedirect, RecordContextProvider } from "ra-core";
+import { useRedirect, RecordContextProvider, useGetMany, type Identifier } from "ra-core";
 import { ReferenceField } from "@/components/admin/reference-field";
-import { NumberField } from "@/components/admin/number-field";
 import { SelectField } from "@/components/admin/select-field";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { CompanyAvatar } from "../companies/CompanyAvatar";
 import { useConfigurationContext } from "../root/ConfigurationContext";
-import type { Deal } from "../types";
+import type { Deal, Contact } from "../types";
+
+const ContactsHeatList = ({ contactIds }: { contactIds: Identifier[] }) => {
+  const { noteStatuses } = useConfigurationContext();
+  const { data: contacts, isPending } = useGetMany<Contact>("contacts", {
+    ids: contactIds || [],
+  }, {
+    enabled: !!contactIds?.length
+  });
+
+  if (isPending || !contacts?.length) return null;
+
+  return (
+    <div className="flex flex-wrap gap-1 mt-1 items-center">
+      {contacts.map((contact) => {
+        const statusConfig = noteStatuses.find(s => s.value === contact.status);
+        return (
+          <div
+            key={contact.id}
+            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-secondary/80 text-[9px] text-muted-foreground border border-border/30"
+          >
+            {statusConfig && (
+              <span
+                className="w-1.5 h-1.5 rounded-full shrink-0"
+                style={{ backgroundColor: statusConfig.color }}
+              />
+            )}
+            <span className="font-semibold truncate max-w-[70px]">
+              {contact.first_name}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export const DealCard = ({ deal, index }: { deal: Deal; index: number }) => {
   if (!deal) return null;
@@ -56,16 +90,19 @@ export const DealCardContent = ({
         >
           <CardContent className="p-4 flex flex-col gap-3">
             <div className="flex items-start justify-between gap-2">
-              <div className="flex flex-col gap-1 min-w-0">
+              <div className="flex flex-col gap-1 min-w-0 flex-1">
                 <p className="text-sm font-bold leading-tight text-foreground truncate">
                   {deal.name}
                 </p>
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
-                  <ReferenceField
-                    source="company_id"
-                    reference="companies"
-                    link={false}
-                  />
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+                    <ReferenceField
+                      source="company_id"
+                      reference="companies"
+                      link={false}
+                    />
+                  </div>
+                  <ContactsHeatList contactIds={deal.contact_ids} />
                 </div>
               </div>
               <div className="shrink-0">
