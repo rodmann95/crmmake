@@ -6,10 +6,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Home, ListTodo, Plus, Settings, Users } from "lucide-react";
+import { Home, ListTodo, Plus, Settings, Users, TrendingUp } from "lucide-react";
 import { useTranslate } from "ra-core";
 import { Link, matchPath, useLocation, useMatch } from "react-router";
 import { ContactCreateSheet } from "../contacts/ContactCreateSheet";
+import { CompanyCreateSheet } from "../companies/CompanyCreateSheet";
 import { useState } from "react";
 import { NoteCreateSheet } from "../notes/NoteCreateSheet";
 import { TaskCreateSheet } from "../tasks/TaskCreateSheet";
@@ -75,7 +76,12 @@ export const MobileNavigation = () => {
             label={translate("resources.tasks.name", { smart_count: 2 })}
             isActive={currentPath === "/tasks"}
           />
-          <SettingsButton />
+          <NavigationButton
+            href="/deals"
+            Icon={TrendingUp}
+            label={translate("resources.deals.name", { smart_count: 2 })}
+            isActive={currentPath === "/deals"}
+          />
         </>
       </div>
     </nav>
@@ -112,6 +118,7 @@ const CreateButton = () => {
   const translate = useTranslate();
   const contact_id = useMatch("/contacts/:id/*")?.params.id;
   const [contactCreateOpen, setContactCreateOpen] = useState(false);
+  const [companyCreateOpen, setCompanyCreateOpen] = useState(false);
   const [noteCreateOpen, setNoteCreateOpen] = useState(false);
   const [taskCreateOpen, setTaskCreateOpen] = useState(false);
 
@@ -120,6 +127,10 @@ const CreateButton = () => {
       <ContactCreateSheet
         open={contactCreateOpen}
         onOpenChange={setContactCreateOpen}
+      />
+      <CompanyCreateSheet
+        open={companyCreateOpen}
+        onOpenChange={setCompanyCreateOpen}
       />
       <NoteCreateSheet
         open={noteCreateOpen}
@@ -154,6 +165,14 @@ const CreateButton = () => {
           <DropdownMenuItem
             className="h-12 px-4 text-base"
             onSelect={() => {
+              setCompanyCreateOpen(true);
+            }}
+          >
+            {translate("resources.companies.forcedCaseName", { _: "Empresa" })}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="h-12 px-4 text-base"
+            onSelect={() => {
               setNoteCreateOpen(true);
             }}
           >
@@ -170,20 +189,5 @@ const CreateButton = () => {
         </DropdownMenuContent>
       </DropdownMenu>
     </>
-  );
-};
-
-const SettingsButton = () => {
-  const translate = useTranslate();
-  const location = useLocation();
-  const isActive = !!matchPath("/settings", location.pathname);
-
-  return (
-    <NavigationButton
-      href="/settings"
-      Icon={Settings}
-      label={translate("crm.settings.title")}
-      isActive={isActive}
-    />
   );
 };

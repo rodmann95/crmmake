@@ -1,6 +1,9 @@
 import { useGetList, useTimeout } from "ra-core";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { Button } from "@/components/ui/button";
+import { Settings } from "lucide-react";
+import { Link } from "react-router";
 import type { Contact, ContactNote } from "../types";
 import { DashboardActivityLog } from "./DashboardActivityLog";
 import { DashboardStepper } from "./DashboardStepper";
@@ -27,6 +30,11 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
           />
           <h1 className="text-xl font-semibold">{title}</h1>
         </div>
+        <Button asChild variant="ghost" size="icon" className="text-secondary-foreground shrink-0 rounded-full">
+          <Link to="/settings" aria-label="Settings">
+            <Settings className="size-5" />
+          </Link>
+        </Button>
       </MobileHeader>
       <MobileContent>{children}</MobileContent>
     </>
