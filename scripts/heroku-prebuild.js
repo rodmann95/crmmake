@@ -14,6 +14,9 @@ const envs = [
   'VITE_ATTACHMENTS_BUCKET'
 ];
 
+console.log('Available process.env keys:', Object.keys(process.env).filter(k => k.startsWith('VITE_') || k.includes('SUPABASE') || k.includes('SB_') || k.includes('KEY')));
+
+
 let content = '';
 for (const env of envs) {
   const value = process.env[env];
