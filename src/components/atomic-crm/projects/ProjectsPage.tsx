@@ -24,6 +24,8 @@ export const ProjectsPage = () => {
   // Local state for filters
   const [selectedCycle, setSelectedCycle] = React.useState<string>("");
   const [selectedStages, setSelectedStages] = React.useState<string[]>([]);
+  const [startDateFilter, setStartDateFilter] = React.useState<string>("");
+  const [endDateFilter, setEndDateFilter] = React.useState<string>("");
 
   // Fetch all deals with pagination high enough to load active ones
   const { data: deals, isPending } = useGetList<Deal>("deals", {
@@ -44,9 +46,15 @@ export const ProjectsPage = () => {
       const matchesCycle = !selectedCycle || deal.commercial_cycle === selectedCycle;
       const matchesStage =
         selectedStages.length === 0 || selectedStages.includes(deal.stage);
-      return matchesCycle && matchesStage;
+      
+      // Period filter check (checks if deal project interval overlaps with selected filter interval)
+      const matchesPeriod =
+        (!startDateFilter || deal.project_end_date! >= startDateFilter) &&
+        (!endDateFilter || deal.project_start_date! <= endDateFilter);
+
+      return matchesCycle && matchesStage && matchesPeriod;
     });
-  }, [validDeals, selectedCycle, selectedStages]);
+  }, [validDeals, selectedCycle, selectedStages, startDateFilter, endDateFilter]);
 
   // Calculate dynamic timeline bounds based on filtered projects
   const { minDate, maxDate, totalDays, timelineMonths } = React.useMemo(() => {
@@ -215,14 +223,36 @@ export const ProjectsPage = () => {
           </DropdownMenu>
         </div>
 
+        {/* Period Filter */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">Período:</span>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <input
+              type="date"
+              value={startDateFilter}
+              onChange={(e) => setStartDateFilter(e.target.value)}
+              className="h-10 px-3 py-1 bg-background border border-border/80 hover:bg-muted/50 rounded-lg text-xs outline-none focus:ring-1 focus:ring-primary w-full sm:w-[130px] font-medium text-foreground"
+            />
+            <span className="text-xs text-muted-foreground">até</span>
+            <input
+              type="date"
+              value={endDateFilter}
+              onChange={(e) => setEndDateFilter(e.target.value)}
+              className="h-10 px-3 py-1 bg-background border border-border/80 hover:bg-muted/50 rounded-lg text-xs outline-none focus:ring-1 focus:ring-primary w-full sm:w-[130px] font-medium text-foreground"
+            />
+          </div>
+        </div>
+
         {/* Clear Filters Helper */}
-        {(selectedCycle || selectedStages.length > 0) && (
+        {(selectedCycle || selectedStages.length > 0 || startDateFilter || endDateFilter) && (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => {
               setSelectedCycle("");
               setSelectedStages([]);
+              setStartDateFilter("");
+              setEndDateFilter("");
             }}
             className="text-xs font-semibold text-muted-foreground hover:text-foreground h-10 px-3"
           >

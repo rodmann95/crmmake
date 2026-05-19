@@ -642,6 +642,10 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/dashboard/HotDeals.tsx",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/dashboard/HotContacts.tsx",
           "type": "registry:component"
         },
