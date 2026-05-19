@@ -91,11 +91,11 @@ export const Dashboard = () => {
         </div>
         <div className="md:col-span-6">
           <div className="flex flex-col gap-6">
-            {totalDeal ? <DealsChart selectedCycle={selectedCycle} /> : null}
-            {totalDeal ? <NegotiationValueChart selectedCycle={selectedCycle} /> : null}
-            {totalDeal ? <MaintenanceChart selectedCycle={selectedCycle} /> : null}
             {totalDeal ? <AccumulatedChart selectedCycle={selectedCycle} /> : null}
             {totalDeal ? <SectorChart selectedCycle={selectedCycle} /> : null}
+            {totalDeal ? <DealsChart selectedCycle={selectedCycle} /> : null}
+            {totalDeal ? <MaintenanceChart selectedCycle={selectedCycle} /> : null}
+            {totalDeal ? <NegotiationValueChart selectedCycle={selectedCycle} /> : null}
             <DashboardActivityLog />
           </div>
         </div>

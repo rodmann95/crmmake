@@ -132,11 +132,11 @@ export const MobileDashboard = () => {
           </CardContent>
         </Card>
 
-        {totalDeal ? <DealsChart selectedCycle={selectedCycle} /> : null}
-        {totalDeal ? <NegotiationValueChart selectedCycle={selectedCycle} /> : null}
-        {totalDeal ? <MaintenanceChart selectedCycle={selectedCycle} /> : null}
         {totalDeal ? <AccumulatedChart selectedCycle={selectedCycle} /> : null}
         {totalDeal ? <SectorChart selectedCycle={selectedCycle} /> : null}
+        {totalDeal ? <DealsChart selectedCycle={selectedCycle} /> : null}
+        {totalDeal ? <MaintenanceChart selectedCycle={selectedCycle} /> : null}
+        {totalDeal ? <NegotiationValueChart selectedCycle={selectedCycle} /> : null}
         <DashboardActivityLog />
       </div>
     </Wrapper>

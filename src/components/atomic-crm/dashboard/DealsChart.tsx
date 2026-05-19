@@ -56,8 +56,10 @@ export const DealsChart = memo(({ selectedCycle }: { selectedCycle: string }) =>
       return acc;
     }, {} as any);
 
-    const amountByMonth = Object.keys(dealsByMonth).map((month) => {
-      const monthDeals = dealsByMonth[month];
+    const amountByMonth = Object.keys(dealsByMonth)
+      .sort()
+      .map((month) => {
+        const monthDeals = dealsByMonth[month];
       return {
         date: format(new Date(month), "MMM"),
         won: monthDeals
