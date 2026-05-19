@@ -46,6 +46,10 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/tasks/TasksPage.tsx",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/tasks/TasksListFilter.tsx",
           "type": "registry:component"
         },
@@ -299,6 +303,10 @@
         },
         {
           "path": "src/components/atomic-crm/providers/fakerest/dataGenerator/companies.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/providers/commons/portugueseCrmMessages.ts",
           "type": "registry:component"
         },
         {
@@ -610,7 +618,19 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/dashboard/SectorChart.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/dashboard/NegotiationValueChart.tsx",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/dashboard/MobileDashboard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/dashboard/MaintenanceChart.tsx",
           "type": "registry:component"
         },
         {
@@ -639,6 +659,10 @@
         },
         {
           "path": "src/components/atomic-crm/dashboard/Dashboard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/dashboard/AccumulatedChart.tsx",
           "type": "registry:component"
         },
         {
@@ -775,6 +799,10 @@
         },
         {
           "path": "src/components/atomic-crm/companies/CompanyEdit.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/companies/CompanyCreateSheet.tsx",
           "type": "registry:component"
         },
         {

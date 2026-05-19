@@ -80,7 +80,10 @@ create table public.deals (
     won_date date,
     expected_closing_date date,
     sales_id bigint,
-    index smallint
+    index smallint,
+    project_start_date date,
+    project_duration_days integer,
+    project_end_date date
 );
 
 create table public.deal_notes (

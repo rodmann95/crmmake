@@ -455,7 +455,7 @@ const SettingsFormFields = () => {
               helperText={false}
               validate={validateDealCycles}
             >
-              <SimpleFormIterator disableReordering disableClear>
+              <SimpleFormIterator disableClear>
                 <TextInput source="label" label={false} />
               </SimpleFormIterator>
             </ArrayInput>

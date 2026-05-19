@@ -15,7 +15,7 @@ import {
   FormLabel,
 } from "@/components/admin/form";
 import { Command as CommandPrimitive } from "cmdk";
-import type { ChoicesProps, InputProps } from "ra-core";
+import type { ChoicesProps, InputProps, Identifier } from "ra-core";
 import {
   useChoices,
   useChoicesContext,
@@ -74,9 +74,10 @@ export const AutocompleteArrayInput = (
       inputText?:
         | React.ReactNode
         | ((option: any | undefined) => React.ReactNode);
+      companyId?: Identifier | null;
     },
 ) => {
-  const { filterToQuery = DefaultFilterToQuery, inputText } = props;
+  const { filterToQuery = DefaultFilterToQuery, inputText, companyId } = props;
   const {
     allChoices = [],
     source,
@@ -122,9 +123,20 @@ export const AutocompleteArrayInput = (
     }
   });
 
-  const availableChoices = allChoices.filter(
+  let availableChoices = allChoices.filter(
     (choice) => !field.value.includes(getChoiceValue(choice)),
   );
+
+  if (companyId) {
+    const compId = String(companyId);
+    availableChoices = [...availableChoices].sort((a, b) => {
+      const aLinked = a.company_id != null && String(a.company_id) === compId;
+      const bLinked = b.company_id != null && String(b.company_id) === compId;
+      if (aLinked && !bLinked) return -1;
+      if (!aLinked && bLinked) return 1;
+      return 0;
+    });
+  }
   const selectedChoices = allChoices.filter((choice) =>
     field.value.includes(getChoiceValue(choice)),
   );

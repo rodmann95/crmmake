@@ -149,8 +149,9 @@ export const DealCardContent = ({
               </div>
             </div>
 
-            {deal.category && (
-              <div className="flex justify-end mt-1">
+            <div className="flex justify-between items-center mt-1">
+              <DealHeatBadge contactIds={deal.contact_ids} />
+              {deal.category ? (
                 <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
                   <SelectField
                     source="category"
@@ -159,11 +160,52 @@ export const DealCardContent = ({
                     optionValue="value"
                   />
                 </div>
-              </div>
-            )}
+              ) : <div />}
+            </div>
           </CardContent>
         </Card>
       </RecordContextProvider>
+    </div>
+  );
+};
+
+const DealHeatBadge = ({ contactIds }: { contactIds: Identifier[] }) => {
+  const { noteStatuses } = useConfigurationContext();
+  const { data: contacts } = useGetMany<Contact>("contacts", {
+    ids: contactIds || [],
+  }, {
+    enabled: !!contactIds?.length
+  });
+
+  if (!contacts?.length) return null;
+
+  const statusValues = noteStatuses.map(s => s.value);
+  let highestIndex = -1;
+  let highestStatus = null;
+  for (const contact of contacts) {
+    if (!contact.status) continue;
+    const index = statusValues.indexOf(contact.status);
+    if (index > highestIndex) {
+      highestIndex = index;
+      highestStatus = contact.status;
+    }
+  }
+
+  if (!highestStatus) return null;
+  const statusConfig = noteStatuses.find(s => s.value === highestStatus);
+  if (!statusConfig) return null;
+
+  return (
+    <div
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider shrink-0 border"
+      style={{
+        backgroundColor: `${statusConfig.color}15`,
+        borderColor: `${statusConfig.color}45`,
+        color: statusConfig.color,
+      }}
+    >
+      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: statusConfig.color }} />
+      {statusConfig.label}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import * as React from "react";
 import { required, useTranslate } from "ra-core";
 import { useWatch } from "react-hook-form";
 import { useFormContext } from "react-hook-form";
@@ -25,6 +26,8 @@ export const DealInputs = () => {
         <DealLinkedToInputs />
         <Separator orientation={isMobile ? "horizontal" : "vertical"} />
         <DealMiscInputs />
+        <Separator orientation={isMobile ? "horizontal" : "vertical"} />
+        <DealProjectDatesInputs />
       </div>
     </div>
   );
@@ -41,6 +44,8 @@ const DealInfoInputs = () => {
 
 const DealLinkedToInputs = () => {
   const translate = useTranslate();
+  const companyId = useWatch({ name: "company_id" });
+
   return (
     <div className="flex flex-col gap-4 flex-1">
       <h3 className="text-base font-medium">
@@ -59,6 +64,7 @@ const DealLinkedToInputs = () => {
           label="resources.deals.fields.contact_ids"
           optionText={contactOptionText}
           helperText={false}
+          companyId={companyId}
         />
       </ReferenceArrayInput>
     </div>
@@ -164,6 +170,44 @@ const DealMiscInputs = () => {
         choices={dealCycles}
         optionText="label"
         optionValue="value"
+        helperText={false}
+      />
+    </div>
+  );
+};
+
+const DealProjectDatesInputs = () => {
+  const { setValue } = useFormContext();
+  const startDate = useWatch({ name: "project_start_date" });
+  const duration = useWatch({ name: "project_duration_days" });
+
+  React.useEffect(() => {
+    if (startDate && duration != null && !isNaN(Number(duration)) && Number(duration) >= 0) {
+      const date = new Date(startDate);
+      // We must avoid timezone shifts, so set date strictly
+      date.setUTCDate(date.getUTCDate() + Number(duration));
+      const formatted = date.toISOString().split("T")[0];
+      setValue("project_end_date", formatted);
+    }
+  }, [startDate, duration, setValue]);
+
+  return (
+    <div className="flex flex-col gap-4 flex-1">
+      <h3 className="text-base font-medium">Datas do Projeto</h3>
+      <DateInput
+        source="project_start_date"
+        label="Data de início previsto"
+        helperText={false}
+      />
+      <NumberInput
+        source="project_duration_days"
+        label="Duração (dias)"
+        helperText={false}
+        min={0}
+      />
+      <DateInput
+        source="project_end_date"
+        label="Data de Fim previsto"
         helperText={false}
       />
     </div>

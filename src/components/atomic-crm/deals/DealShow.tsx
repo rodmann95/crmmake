@@ -31,7 +31,6 @@ import { findDealLabel, formatISODateString } from "./dealUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TasksIterator } from "../tasks/TasksIterator";
 import { AddTask } from "../tasks/AddTask";
-import { List } from "@/components/admin/list";
 
 export const DealShow = ({ open, id }: { open: boolean; id?: string }) => {
   const redirect = useRedirect();
@@ -213,6 +212,12 @@ const DealShowContent = () => {
             >
               {translate("resources.tasks.name", { smart_count: 2 })}
             </TabsTrigger>
+            <TabsTrigger
+              value="project_dates"
+              className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Datas do Projeto
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -333,6 +338,40 @@ const DealShowContent = () => {
                 <TasksIterator showContact />
               </div>
             </InfiniteListBase>
+          </TabsContent>
+
+          <TabsContent value="project_dates" className="p-4 sm:p-6 m-0">
+            <div className="p-6 rounded-xl border bg-card shadow-sm space-y-6 max-w-md">
+              <h3 className="text-base font-bold text-foreground border-b pb-2">
+                Datas e Cronograma do Projeto
+              </h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center text-sm py-1 border-b border-border/40">
+                  <span className="text-muted-foreground font-medium">Data de início previsto</span>
+                  <span className="font-semibold text-foreground">
+                    {record.project_start_date
+                      ? formatISODateString(record.project_start_date)
+                      : "Não definida"}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm py-1 border-b border-border/40">
+                  <span className="text-muted-foreground font-medium">Duração</span>
+                  <span className="font-semibold text-foreground">
+                    {record.project_duration_days != null
+                      ? `${record.project_duration_days} dias`
+                      : "Não definida"}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm py-1 border-b border-border/40">
+                  <span className="text-muted-foreground font-medium">Data de Fim previsto</span>
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                    {record.project_end_date
+                      ? formatISODateString(record.project_end_date)
+                      : "Não definida"}
+                  </span>
+                </div>
+              </div>
+            </div>
           </TabsContent>
         </div>
       </Tabs>
