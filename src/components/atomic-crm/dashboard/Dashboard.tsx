@@ -10,6 +10,7 @@ import { MaintenanceChart } from "./MaintenanceChart";
 import { AccumulatedChart } from "./AccumulatedChart";
 import { SectorChart } from "./SectorChart";
 import { HotContacts } from "./HotContacts";
+import { HotDeals } from "./HotDeals";
 import { TasksList } from "./TasksList";
 import { Welcome } from "./Welcome";
 import { useConfigurationContext } from "../root/ConfigurationContext";
@@ -87,6 +88,7 @@ export const Dashboard = () => {
           <div className="flex flex-col gap-4">
             {import.meta.env.VITE_IS_DEMO === "true" ? <Welcome /> : null}
             <HotContacts />
+            <HotDeals />
           </div>
         </div>
         <div className="md:col-span-6">

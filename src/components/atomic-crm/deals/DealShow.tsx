@@ -27,6 +27,7 @@ import { NotesIterator } from "../notes/NotesIterator";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 import { ContactList } from "./ContactList";
+import { DealHeatBadge } from "./DealCard";
 import { findDealLabel, formatISODateString } from "./dealUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TasksIterator } from "../tasks/TasksIterator";
@@ -167,6 +168,15 @@ const DealShowContent = () => {
             >
               {findDealLabel(dealStages, record.stage)}
             </Badge>
+          </div>
+
+          <div className="space-y-1 min-w-[120px] sm:min-w-[140px]">
+            <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Calor do Negócio
+            </p>
+            <div>
+              <DealHeatBadge dealStatus={record.status} contactIds={record.contact_ids} />
+            </div>
           </div>
 
           <div className="space-y-1 min-w-[120px] sm:min-w-[140px]">

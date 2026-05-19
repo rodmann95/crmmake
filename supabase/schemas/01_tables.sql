@@ -83,7 +83,8 @@ create table public.deals (
     index smallint,
     project_start_date date,
     project_duration_days integer,
-    project_end_date date
+    project_end_date date,
+    status text
 );
 
 create table public.deal_notes (

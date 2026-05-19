@@ -132,6 +132,7 @@ export type Deal = {
   project_start_date?: string;
   project_duration_days?: number;
   project_end_date?: string;
+  status?: string;
 } & Pick<RaRecord, "id">;
 
 export type DealNote = {

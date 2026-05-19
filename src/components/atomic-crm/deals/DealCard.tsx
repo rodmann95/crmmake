@@ -150,7 +150,7 @@ export const DealCardContent = ({
             </div>
 
             <div className="flex justify-between items-center mt-1">
-              <DealHeatBadge contactIds={deal.contact_ids} />
+              <DealHeatBadge dealStatus={deal.status} contactIds={deal.contact_ids} />
               {deal.category ? (
                 <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
                   <SelectField
@@ -169,30 +169,31 @@ export const DealCardContent = ({
   );
 };
 
-const DealHeatBadge = ({ contactIds }: { contactIds: Identifier[] }) => {
+export const DealHeatBadge = ({ dealStatus, contactIds }: { dealStatus?: string; contactIds: Identifier[] }) => {
   const { noteStatuses } = useConfigurationContext();
   const { data: contacts } = useGetMany<Contact>("contacts", {
     ids: contactIds || [],
   }, {
-    enabled: !!contactIds?.length
+    enabled: !dealStatus && !!contactIds?.length
   });
 
-  if (!contacts?.length) return null;
+  let activeStatus = dealStatus;
 
-  const statusValues = noteStatuses.map(s => s.value);
-  let highestIndex = -1;
-  let highestStatus = null;
-  for (const contact of contacts) {
-    if (!contact.status) continue;
-    const index = statusValues.indexOf(contact.status);
-    if (index > highestIndex) {
-      highestIndex = index;
-      highestStatus = contact.status;
+  if (!activeStatus && contacts?.length) {
+    const statusValues = noteStatuses.map(s => s.value);
+    let highestIndex = -1;
+    for (const contact of contacts) {
+      if (!contact.status) continue;
+      const index = statusValues.indexOf(contact.status);
+      if (index > highestIndex) {
+        highestIndex = index;
+        activeStatus = contact.status;
+      }
     }
   }
 
-  if (!highestStatus) return null;
-  const statusConfig = noteStatuses.find(s => s.value === highestStatus);
+  if (!activeStatus) return null;
+  const statusConfig = noteStatuses.find(s => s.value === activeStatus);
   if (!statusConfig) return null;
 
   return (

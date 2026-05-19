@@ -16,6 +16,7 @@ import { AccumulatedChart } from "./AccumulatedChart";
 import { SectorChart } from "./SectorChart";
 import MobileHeader from "../layout/MobileHeader";
 import { MobileContent } from "../layout/MobileContent";
+import { HotDeals } from "./HotDeals";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
@@ -131,6 +132,8 @@ export const MobileDashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        <HotDeals />
 
         {totalDeal ? <AccumulatedChart selectedCycle={selectedCycle} /> : null}
         {totalDeal ? <SectorChart selectedCycle={selectedCycle} /> : null}

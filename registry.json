@@ -346,6 +346,10 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/projects/ProjectsPage.tsx",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/notes/utils.ts",
           "type": "registry:component"
         },

@@ -4,6 +4,7 @@ import { datatype, lorem, random } from "faker/locale/en_US";
 import {
   defaultDealCategories,
   defaultDealStages,
+  defaultNoteStatuses,
 } from "../../../root/defaultConfiguration";
 import type { Deal } from "../../../types";
 import type { Db } from "./types";
@@ -41,6 +42,7 @@ export const generateDeals = (db: Db): Deal[] => {
       expected_closing_date,
       sales_id: company.sales_id!,
       index: 0,
+      status: random.arrayElement(defaultNoteStatuses).value,
     };
   });
   // compute index based on stage

@@ -71,7 +71,7 @@ const DealLinkedToInputs = () => {
   );
 };
 const DealMiscInputs = () => {
-  const { dealStages, dealCategories, dealCycles, dealPipelineStatuses, currency } = useConfigurationContext();
+  const { dealStages, dealCategories, dealCycles, dealPipelineStatuses, currency, noteStatuses } = useConfigurationContext();
   const translate = useTranslate();
   const { setValue } = useFormContext();
   const stage = useWatch({ name: "stage" });
@@ -155,6 +155,15 @@ const DealMiscInputs = () => {
             setValue("won_date", null);
           }
         }}
+      />
+      <SelectInput
+        source="status"
+        label="Calor do Negócio"
+        choices={noteStatuses}
+        optionText="label"
+        optionValue="value"
+        defaultValue="cold"
+        helperText={false}
       />
       {isWon && (
         <DateInput
