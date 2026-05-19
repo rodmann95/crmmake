@@ -6,9 +6,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Home, ListTodo, Plus, Users, TrendingUp } from "lucide-react";
+import { Home, ListTodo, Plus, Users, TrendingUp, CalendarDays } from "lucide-react";
 import { useTranslate } from "ra-core";
 import { Link, matchPath, useLocation, useMatch } from "react-router";
+import { ProjectsPage } from "../projects/ProjectsPage";
 import { ContactCreateSheet } from "../contacts/ContactCreateSheet";
 import { CompanyCreateSheet } from "../companies/CompanyCreateSheet";
 import { useState } from "react";
@@ -30,6 +31,8 @@ export const MobileNavigation = () => {
     currentPath = "/tasks";
   } else if (matchPath("/deals/*", location.pathname)) {
     currentPath = "/deals";
+  } else if (matchPath("/projects/*", location.pathname)) {
+    currentPath = "/projects";
   } else {
     currentPath = false;
   }
@@ -82,6 +85,12 @@ export const MobileNavigation = () => {
             label={translate("resources.deals.name", { smart_count: 2 })}
             isActive={currentPath === "/deals"}
           />
+          <NavigationButton
+            href={ProjectsPage.path}
+            Icon={CalendarDays}
+            label="Projetos"
+            isActive={currentPath === "/projects"}
+          />
         </>
       </div>
     </nav>
@@ -103,13 +112,13 @@ const NavigationButton = ({
     asChild
     variant="ghost"
     className={cn(
-      "flex-col gap-1 h-auto py-2 px-1 rounded-md w-16",
+      "flex-col gap-1 h-auto py-2 px-1 rounded-md w-13 sm:w-16",
       isActive ? null : "text-muted-foreground",
     )}
   >
     <Link to={href}>
-      <Icon className="size-6" />
-      <span className="text-[0.6rem] font-medium">{label}</span>
+      <Icon className="size-5.5 sm:size-6" />
+      <span className="text-[0.55rem] sm:text-[0.6rem] font-medium truncate max-w-[50px] sm:max-w-none">{label}</span>
     </Link>
   </Button>
 );

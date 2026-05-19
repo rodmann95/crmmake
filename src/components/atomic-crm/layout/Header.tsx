@@ -10,6 +10,7 @@ import { useConfigurationContext } from "../root/ConfigurationContext";
 import { ImportPage } from "../misc/ImportPage";
 import { TasksPage } from "../tasks/TasksPage";
 import { ChangelogPage } from "../misc/ChangelogPage";
+import { ProjectsPage } from "../projects/ProjectsPage";
 
 const Header = () => {
   const { darkModeLogo, lightModeLogo, title } = useConfigurationContext();
@@ -27,6 +28,8 @@ const Header = () => {
     currentPath = "/deals";
   } else if (matchPath(`${TasksPage.path}/*`, location.pathname)) {
     currentPath = TasksPage.path;
+  } else if (matchPath(`${ProjectsPage.path}/*`, location.pathname)) {
+    currentPath = ProjectsPage.path;
   } else {
     currentPath = false;
   }
@@ -87,6 +90,11 @@ const Header = () => {
                     })}
                     to={TasksPage.path}
                     isActive={currentPath === TasksPage.path}
+                  />
+                  <NavigationTab
+                    label="Projetos"
+                    to={ProjectsPage.path}
+                    isActive={currentPath === ProjectsPage.path}
                   />
                 </nav>
               </div>
