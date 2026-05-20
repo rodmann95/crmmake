@@ -30,9 +30,9 @@ const DealList = () => {
 
   const dealFilters = [
     <SearchInput source="q" alwaysOn />,
-    <ReferenceInput source="company_id" reference="companies">
+    <ReferenceInput source="company_id" reference="companies" alwaysOn>
       <AutocompleteInput
-        label={false}
+        label="Empresa"
         placeholder={translate("resources.deals.fields.company_id")}
       />
     </ReferenceInput>,

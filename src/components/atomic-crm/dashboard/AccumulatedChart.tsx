@@ -1,5 +1,5 @@
 import { ResponsiveBar } from "@nivo/bar";
-import { format, startOfMonth } from "date-fns";
+import { format } from "date-fns";
 import { LineChart } from "lucide-react";
 import { useGetList } from "ra-core";
 import { memo, useMemo } from "react";
@@ -36,14 +36,19 @@ export const AccumulatedChart = memo(({ selectedCycle }: { selectedCycle: string
     // Filter only won deals to calculate absolute realized gains/growth
     const wonDeals = data.filter((deal) => deal.stage === "won");
 
-    // Group by month
+    // Group by unique YYYY-MM string to avoid timezone shifts and duplicate index keys
     const dealsByMonth = wonDeals.reduce((acc, deal) => {
-      const wonDate = (deal as any).won_date ? new Date((deal as any).won_date) : new Date(deal.created_at ?? new Date());
-      const month = startOfMonth(wonDate).toISOString();
-      if (!acc[month]) {
-        acc[month] = [];
+      const wonDateStr = (deal as any).won_date || deal.created_at || new Date().toISOString();
+      const dateObj = new Date(wonDateStr);
+      
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const key = `${year}-${month}`;
+
+      if (!acc[key]) {
+        acc[key] = [];
       }
-      acc[month].push(deal);
+      acc[key].push(deal);
       return acc;
     }, {} as Record<string, Deal[]>);
 
@@ -54,8 +59,8 @@ export const AccumulatedChart = memo(({ selectedCycle }: { selectedCycle: string
     let cumulativeMaintMonth = 0;
     let cumulativeMaintProj = 0;
 
-    return sortedMonths.map((monthStr) => {
-      const monthDeals = dealsByMonth[monthStr];
+    return sortedMonths.map((key) => {
+      const monthDeals = dealsByMonth[key];
       const devSum = monthDeals.reduce((sum, d) => sum + (d.amount || 0), 0);
       const maintSum = monthDeals.reduce((sum, d) => sum + (d.maintenance_amount || 0), 0);
 
@@ -63,8 +68,13 @@ export const AccumulatedChart = memo(({ selectedCycle }: { selectedCycle: string
       cumulativeMaintMonth += maintSum;
       cumulativeMaintProj += maintSum * 12;
 
+      const [year, month] = key.split("-");
+      // Use local constructor to prevent any timezone shifts
+      const dateObj = new Date(Number(year), Number(month) - 1, 1);
+      const formattedMonth = format(dateObj, "MMM");
+
       return {
-        date: format(new Date(monthStr), "MMM"),
+        date: `${formattedMonth}/${year.slice(-2)}`, // Unique label, e.g. "Mar/25", "Jul/25"
         "Desenv. Acumulado": cumulativeDev,
         "Sust. Mês Acumulado": cumulativeMaintMonth,
         "Sust. Proj. Acumulado": cumulativeMaintProj,
