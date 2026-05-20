@@ -13,6 +13,7 @@ import {
 
 import { SimpleList } from "../simple-list/SimpleList";
 import { CompanyAvatar } from "../companies/CompanyAvatar";
+import { ReferenceField } from "@/components/admin/reference-field";
 import type { Deal } from "../types";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 
@@ -96,7 +97,14 @@ export const HotDeals = () => {
           }}
           leftAvatar={(deal) => (
             <div className="shrink-0">
-              <CompanyAvatar record={{ id: deal.company_id } as any} width={40} height={40} />
+              <ReferenceField
+                record={deal}
+                source="company_id"
+                reference="companies"
+                link={false}
+              >
+                <CompanyAvatar width={40} height={40} />
+              </ReferenceField>
             </div>
           )}
           empty={

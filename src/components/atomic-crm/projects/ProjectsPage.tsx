@@ -14,6 +14,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { CompanyAvatar } from "../companies/CompanyAvatar";
+import { ReferenceField } from "@/components/admin/reference-field";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 import { formatISODateString } from "../deals/dealUtils";
@@ -351,7 +352,14 @@ export const ProjectsPage = () => {
                             className="hover:underline flex items-center gap-3 min-w-0"
                           >
                             <div className="shrink-0">
-                              <CompanyAvatar width={40} height={40} />
+                              <ReferenceField
+                                record={deal}
+                                source="company_id"
+                                reference="companies"
+                                link={false}
+                              >
+                                <CompanyAvatar width={40} height={40} />
+                              </ReferenceField>
                             </div>
                             <div className="min-w-0">
                               <p className="text-sm font-bold text-foreground truncate max-w-[170px]">
