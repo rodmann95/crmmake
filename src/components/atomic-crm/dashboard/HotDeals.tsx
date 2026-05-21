@@ -42,6 +42,24 @@ export const HotDeals = () => {
     );
   }, [dealData]);
 
+  const totals = React.useMemo(() => {
+    let dev = 0;
+    let maint = 0;
+    openHotDeals.forEach(deal => {
+      dev += deal.amount || 0;
+      maint += deal.maintenance_amount || 0;
+    });
+    return { dev, maint, proj: maint * 12, total: dev + (maint * 12) };
+  }, [openHotDeals]);
+
+  const formattedCurrency = (val: number) => {
+    return val.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: currency || "BRL",
+      maximumFractionDigits: 0,
+    });
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center">
@@ -71,6 +89,24 @@ export const HotDeals = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
+
+      {openHotDeals.length > 0 && (
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mb-1 flex flex-col gap-1.5 shadow-sm">
+          <div className="flex justify-between items-center text-xs">
+            <span className="text-muted-foreground font-medium">Soma Desenv.:</span>
+            <span className="font-bold text-foreground">{formattedCurrency(totals.dev)}</span>
+          </div>
+          <div className="flex justify-between items-center text-xs">
+            <span className="text-muted-foreground font-medium">Sust. Proj. (12m):</span>
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">{formattedCurrency(totals.proj)}</span>
+          </div>
+          <div className="flex justify-between items-center text-[13px] border-t border-amber-500/20 pt-1.5 mt-0.5">
+            <span className="font-bold text-amber-700 dark:text-amber-500">Total Quente:</span>
+            <span className="font-extrabold text-amber-700 dark:text-amber-500">{formattedCurrency(totals.total)}</span>
+          </div>
+        </div>
+      )}
+
       <Card className="py-0 border border-border/40 shadow-sm rounded-xl overflow-hidden">
         <SimpleList<Deal>
           linkType="show"

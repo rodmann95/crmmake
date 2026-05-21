@@ -27,7 +27,7 @@ export const NegotiationValueChart = memo(({ selectedCycle }: { selectedCycle: s
   });
 
   const totals = useMemo(() => {
-    if (!deals) return { dev: 0, maint: 0, proj: 0, byStage: [] };
+    if (!deals) return { dev: 0, maint: 0, proj: 0, hotDev: 0, hotMaint: 0, hotProj: 0, byStage: [] };
 
     // Filter deals in negotiation (not won, not lost)
     const activeDeals = deals.filter((deal) => !["won", "lost"].includes(deal.stage));
@@ -35,6 +35,11 @@ export const NegotiationValueChart = memo(({ selectedCycle }: { selectedCycle: s
     const devTotal = activeDeals.reduce((sum, d) => sum + (d.amount || 0), 0);
     const maintTotal = activeDeals.reduce((sum, d) => sum + (d.maintenance_amount || 0), 0);
     const projTotal = activeDeals.reduce((sum, d) => sum + (d.maintenance_amount || 0) * 12, 0);
+
+    const hotDeals = activeDeals.filter(d => d.status === "hot");
+    const hotDevTotal = hotDeals.reduce((sum, d) => sum + (d.amount || 0), 0);
+    const hotMaintTotal = hotDeals.reduce((sum, d) => sum + (d.maintenance_amount || 0), 0);
+    const hotProjTotal = hotDeals.reduce((sum, d) => sum + (d.maintenance_amount || 0) * 12, 0);
 
     // Group by stage for the breakdown chart
     const stageBreakdown = activeDeals.reduce((acc, deal) => {
@@ -61,6 +66,9 @@ export const NegotiationValueChart = memo(({ selectedCycle }: { selectedCycle: s
       dev: devTotal,
       maint: maintTotal,
       proj: projTotal,
+      hotDev: hotDevTotal,
+      hotMaint: hotMaintTotal,
+      hotProj: hotProjTotal,
       byStage,
     };
   }, [deals, dealStages]);
@@ -97,18 +105,33 @@ export const NegotiationValueChart = memo(({ selectedCycle }: { selectedCycle: s
           <span className="text-sm sm:text-base font-extrabold text-blue-500 truncate">
             {formattedCurrency(totals.dev)}
           </span>
+          {totals.hotDev > 0 && (
+            <span className="text-[10px] text-amber-500 font-semibold mt-0.5 truncate">
+              🔥 {formattedCurrency(totals.hotDev)} Quente
+            </span>
+          )}
         </div>
         <div className="bg-muted/30 border border-border/30 rounded-lg p-3 flex flex-col gap-1">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Sust. Mês Ativa</span>
           <span className="text-sm sm:text-base font-extrabold text-emerald-500 truncate">
             {formattedCurrency(totals.maint)}
           </span>
+          {totals.hotMaint > 0 && (
+            <span className="text-[10px] text-amber-500 font-semibold mt-0.5 truncate">
+              🔥 {formattedCurrency(totals.hotMaint)} Quente
+            </span>
+          )}
         </div>
         <div className="bg-muted/30 border border-border/30 rounded-lg p-3 flex flex-col gap-1">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Sust. Anual Ativa</span>
           <span className="text-sm sm:text-base font-extrabold text-indigo-500 truncate">
             {formattedCurrency(totals.proj)}
           </span>
+          {totals.hotProj > 0 && (
+            <span className="text-[10px] text-amber-500 font-semibold mt-0.5 truncate">
+              🔥 {formattedCurrency(totals.hotProj)} Quente
+            </span>
+          )}
         </div>
       </div>
 
