@@ -49,6 +49,7 @@ export const SectorChart = memo(({ selectedCycle }: { selectedCycle: string }) =
   const { data: deals, isPending: isPendingDeals } = useGetList<Deal>("deals", {
     pagination: { perPage: 1000, page: 1 },
     filter: {
+      "archived_at@is": null,
       ...(selectedCycle === "all" ? { "created_at@gte": threeMonthsAgo } : { commercial_cycle: selectedCycle }),
     },
   });

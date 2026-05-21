@@ -26,6 +26,7 @@ export const AccumulatedChart = memo(({ selectedCycle }: { selectedCycle: string
       order: "ASC",
     },
     filter: {
+      "archived_at@is": null,
       ...(selectedCycle === "all" ? { "created_at@gte": threeMonthsAgo } : { commercial_cycle: selectedCycle }),
     },
   });

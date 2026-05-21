@@ -21,6 +21,7 @@ export const NegotiationValueChart = memo(({ selectedCycle }: { selectedCycle: s
   const { data: deals, isPending } = useGetList<Deal>("deals", {
     pagination: { perPage: 1000, page: 1 },
     filter: {
+      "archived_at@is": null,
       ...(selectedCycle === "all" ? { "created_at@gte": threeMonthsAgo } : { commercial_cycle: selectedCycle }),
     },
   });
